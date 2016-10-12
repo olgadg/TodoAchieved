@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TodoAchieved</string>
+    <!--Form-->
+    <string name="save_task_button_name">Save</string>
+</resources>
