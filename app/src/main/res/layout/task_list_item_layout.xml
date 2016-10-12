@@ -8,5 +8,9 @@
         android:id="@+id/task_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp" />
+        android:textSize="@dimen/font_size"
+        android:paddingLeft="@dimen/margin_horizontal"
+        android:paddingRight="@dimen/margin_horizontal"
+        android:paddingTop="@dimen/margin_vertical"
+        android:paddingBottom="@dimen/margin_vertical"/>
 </LinearLayout>
