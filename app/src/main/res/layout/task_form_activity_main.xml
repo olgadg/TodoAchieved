@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/custom_toolbar"
+        style="@style/AppTheme.ToolbarStyle"
+        tools:title="@string/app_name"/>
 
     <fragment
         android:id="@+id/task_form_fragment"
         android:name="com.example.olgadominguez.todoachieved.fragment.taskform.TaskFormFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:layout="@layout/task_form_fragment_main" />
 </LinearLayout>

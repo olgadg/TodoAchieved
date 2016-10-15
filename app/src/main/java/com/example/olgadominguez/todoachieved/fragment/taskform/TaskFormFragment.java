@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.olgadominguez.todoachieved.R;
@@ -24,6 +26,7 @@ public class TaskFormFragment extends Fragment implements TaskFormView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         presenter = new TaskFormPresenter(this, DatabaseHelper.getDaoSession(getActivity().getApplication()));
     }
 
@@ -34,17 +37,32 @@ public class TaskFormFragment extends Fragment implements TaskFormView {
 
         editText = (EditText) rootView.findViewById(R.id.task_edittext);
 
-        Button saveButton = (Button) rootView.findViewById(R.id.save_task_button);
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onSaveButtonClick(v);
-            }
-        });
         return rootView;
     }
 
-    private void onSaveButtonClick(View v) {
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.task_form_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.done:
+                onSaveButtonClick();
+                return true;
+            case android.R.id.home :
+                getActivity().finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    private void onSaveButtonClick() {
         if (editText.getText() != null) {
             TodoTask todoTask = new TodoTask();
             todoTask.setText(editText.getText().toString());

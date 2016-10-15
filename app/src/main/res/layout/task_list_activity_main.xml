@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/custom_toolbar"
+        style="@style/AppTheme.ToolbarStyle"/>
 
     <fragment
         android:id="@+id/task_list_fragment"
         android:name="com.example.olgadominguez.todoachieved.fragment.tasklist.TaskListFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:layout="@layout/task_list_fragment_main" />
 </LinearLayout>
