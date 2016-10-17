@@ -3,5 +3,6 @@
     <!--Form-->
     <string name="task_form_done">done</string>
     <string name="task_form_task_label">Task</string>
+    <string name="task_form_choose_date_button_name">Choose Date</string>
     <string name="save_task_button_name">Save</string>
 </resources>
