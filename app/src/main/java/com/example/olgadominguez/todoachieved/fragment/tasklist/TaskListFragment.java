@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.example.olgadominguez.todoachieved.R;
 import com.example.olgadominguez.todoachieved.activity.taskform.TaskFormActivity;
 import com.example.olgadominguez.todoachieved.adapter.TaskListAdapter;
+import com.example.olgadominguez.todoachieved.adapter.TaskListItemClickListener;
 import com.example.olgadominguez.todoachieved.database.DatabaseHelper;
 import com.example.olgadominguez.todoachieved.model.TodoTask;
 import com.example.olgadominguez.todoachieved.presenter.tasklist.TaskListPresenter;
@@ -21,7 +22,7 @@ import com.example.olgadominguez.todoachieved.presenter.tasklist.TaskListView;
 
 import java.util.List;
 
-public class TaskListFragment extends Fragment implements TaskListView {
+public class TaskListFragment extends Fragment implements TaskListView, TaskListItemClickListener {
     private static final String TAG = "TaskListFragment";
 
     private RecyclerView recyclerView;
@@ -53,7 +54,7 @@ public class TaskListFragment extends Fragment implements TaskListView {
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        adapter = new TaskListAdapter();
+        adapter = new TaskListAdapter(this);
         recyclerView.setAdapter(adapter);
 
         fab = (FloatingActionButton) rootView.findViewById(R.id.floating_action_button);
@@ -82,5 +83,13 @@ public class TaskListFragment extends Fragment implements TaskListView {
     public void onAddTodoTask() {
         Intent intent = new Intent(getActivity(), TaskFormActivity.class);
         startActivityForResult(intent, TaskFormActivity.TASK_REQUEST_CODE);
+    }
+
+    @Override
+    public void onItemClick(long taskId) {
+        Intent intent = new Intent(getActivity(), TaskFormActivity.class);
+        intent.putExtra(TaskFormActivity.INTENT_TASK_ID, taskId);
+        startActivityForResult(intent, TaskFormActivity.TASK_REQUEST_CODE);
+
     }
 }

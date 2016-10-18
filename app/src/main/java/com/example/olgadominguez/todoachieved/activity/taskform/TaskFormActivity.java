@@ -5,9 +5,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.example.olgadominguez.todoachieved.R;
+import com.example.olgadominguez.todoachieved.fragment.taskform.TaskFormFragment;
 
 public class TaskFormActivity extends AppCompatActivity {
     public static final int TASK_REQUEST_CODE = 0;
+    public static final String INTENT_TASK_ID = "intent_task_id";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

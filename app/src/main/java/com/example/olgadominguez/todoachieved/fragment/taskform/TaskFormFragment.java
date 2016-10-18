@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,6 +18,7 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 
 import com.example.olgadominguez.todoachieved.R;
+import com.example.olgadominguez.todoachieved.activity.taskform.TaskFormActivity;
 import com.example.olgadominguez.todoachieved.database.DatabaseHelper;
 import com.example.olgadominguez.todoachieved.dialog.TaskDatePickerDialog;
 import com.example.olgadominguez.todoachieved.dialog.TaskTimePickerDialog;
@@ -62,7 +65,15 @@ public class TaskFormFragment extends Fragment implements TaskFormView {
                 chooseTime();
             }
         });
-        presenter.onViewSet();
+
+        taskDateTextView.showDefaultText();
+        taskTimeTextView.showDefaultText();
+        if (savedInstanceState == null) {
+            long taskId = getActivity().getIntent().getLongExtra(TaskFormActivity.INTENT_TASK_ID, -1);
+            if (taskId != -1) {
+                presenter.loadTodoTask(taskId);
+            }
+        }
         return rootView;
     }
 
@@ -90,9 +101,7 @@ public class TaskFormFragment extends Fragment implements TaskFormView {
 
     private void onSaveButtonClick() {
         if (taskNameEditText.getText() != null) {
-            TodoTask todoTask = new TodoTask();
-            todoTask.setText(taskNameEditText.getText().toString());
-            presenter.saveTodoTask(todoTask);
+            presenter.saveTodoTask(taskNameEditText.getText().toString());
         }
     }
 
@@ -106,6 +115,39 @@ public class TaskFormFragment extends Fragment implements TaskFormView {
     public void onDateTimeChanged(Calendar taskDate) {
         taskDateTextView.showDateTime(taskDate);
         taskTimeTextView.showDateTime(taskDate);
+    }
+
+    @Override
+    public void onTaskLoaded(TodoTask todoTask) {
+        taskNameEditText.setText(todoTask.getText());
+        if (todoTask.getDate() != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(todoTask.getDate());
+            taskDateTextView.showDateTime(calendar);
+            taskTimeTextView.showDateTime(calendar);
+        } else {
+            taskDateTextView.showDefaultText();
+            taskTimeTextView.showDefaultText();
+        }
+    }
+
+    @Override
+    public void onErrorSavingTask(Throwable e) {
+        Log.e(TAG, getString(R.string.task_form_saving_error), e);
+        showError(R.string.task_form_saving_error);
+    }
+
+    @Override
+    public void onErrorLoadingTask(Throwable e) {
+        Log.e(TAG, getString(R.string.task_form_loading_error), e);
+        showError(R.string.task_form_loading_error);
+
+    }
+
+    private void showError(int messageId) {
+        if (getView() != null) {
+            Snackbar.make(getView(), messageId, Snackbar.LENGTH_LONG).show();
+        }
     }
 
     public void chooseDate() {

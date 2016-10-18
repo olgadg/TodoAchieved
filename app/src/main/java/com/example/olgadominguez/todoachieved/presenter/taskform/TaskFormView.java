@@ -9,4 +9,10 @@ public interface TaskFormView {
     void onItemAdded(TodoTask todoTask);
 
     void onDateTimeChanged(Calendar taskDate);
+
+    void onTaskLoaded(TodoTask todoTask);
+
+    void onErrorSavingTask(Throwable e);
+
+    void onErrorLoadingTask(Throwable e);
 }

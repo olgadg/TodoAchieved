@@ -4,7 +4,6 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.NotNull;
 
-import java.util.Date;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
@@ -14,10 +13,10 @@ public class TodoTask {
 
     @NotNull
     private String text;
-    private Date createdDate;
-    private Date date;
-    @Generated(hash = 1464874962)
-    public TodoTask(Long id, @NotNull String text, Date createdDate, Date date) {
+    private Long createdDate;
+    private Long date;
+    @Generated(hash = 2104567330)
+    public TodoTask(Long id, @NotNull String text, Long createdDate, Long date) {
         this.id = id;
         this.text = text;
         this.createdDate = createdDate;
@@ -38,17 +37,16 @@ public class TodoTask {
     public void setText(String text) {
         this.text = text;
     }
-    public Date getCreatedDate() {
+    public Long getCreatedDate() {
         return this.createdDate;
     }
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(Long createdDate) {
         this.createdDate = createdDate;
     }
-    public Date getDate() {
+    public Long getDate() {
         return this.date;
     }
-    public void setDate(Date date) {
+    public void setDate(Long date) {
         this.date = date;
     }
-    
 }
