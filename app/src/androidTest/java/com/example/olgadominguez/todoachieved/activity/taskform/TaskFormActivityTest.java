@@ -12,13 +12,13 @@ import com.example.olgadominguez.todoachieved.task.form.TaskFormActivity;
 import com.example.olgadominguez.todoachieved.task.model.DaoSession;
 import com.example.olgadominguez.todoachieved.task.model.TodoTask;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.List;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -42,7 +42,6 @@ public class TaskFormActivityTest {
 
     @Before
     public void setup() {
-
         daoSession = DatabaseHelper.getDaoSession((Application) InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext());
     }
 
@@ -55,7 +54,7 @@ public class TaskFormActivityTest {
     public void addItem() {
 
         onView(withId(R.id.task_edittext)).perform(typeText(TASK_TEXT));
-        onView(withId(R.id.save_task_button)).perform(click());
+        onView(withId(R.id.done)).perform(click());
 
         List<TodoTask> tasks = daoSession.getTodoTaskDao().queryBuilder().list();
         assertThat("Task added", tasks.get(0).getText(), is(TASK_TEXT));
