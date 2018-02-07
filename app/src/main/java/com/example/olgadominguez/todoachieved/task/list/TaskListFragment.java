@@ -1,4 +1,4 @@
-package com.example.olgadominguez.todoachieved.fragment.tasklist;
+package com.example.olgadominguez.todoachieved.task.list;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,13 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.olgadominguez.todoachieved.R;
-import com.example.olgadominguez.todoachieved.activity.taskform.TaskFormActivity;
-import com.example.olgadominguez.todoachieved.adapter.TaskListAdapter;
-import com.example.olgadominguez.todoachieved.adapter.TaskListItemClickListener;
+import com.example.olgadominguez.todoachieved.task.form.TaskFormActivity;
+import com.example.olgadominguez.todoachieved.task.list.TaskListAdapter;
+import com.example.olgadominguez.todoachieved.task.list.TaskListItemClickListener;
 import com.example.olgadominguez.todoachieved.database.DatabaseHelper;
-import com.example.olgadominguez.todoachieved.model.TodoTask;
-import com.example.olgadominguez.todoachieved.presenter.tasklist.TaskListPresenter;
-import com.example.olgadominguez.todoachieved.presenter.tasklist.TaskListView;
+import com.example.olgadominguez.todoachieved.task.model.TodoTask;
+import com.example.olgadominguez.todoachieved.task.list.TaskListPresenter;
+import com.example.olgadominguez.todoachieved.task.list.TaskListView;
 
 import java.util.List;
 

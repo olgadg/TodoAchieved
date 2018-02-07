@@ -1,6 +1,6 @@
-package com.example.olgadominguez.todoachieved.presenter.taskform;
+package com.example.olgadominguez.todoachieved.task.form;
 
-import com.example.olgadominguez.todoachieved.model.TodoTask;
+import com.example.olgadominguez.todoachieved.task.model.TodoTask;
 
 import java.util.Calendar;
 

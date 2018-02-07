@@ -1,8 +1,8 @@
-package com.example.olgadominguez.todoachieved.repository;
+package com.example.olgadominguez.todoachieved.task;
 
-import com.example.olgadominguez.todoachieved.model.DaoSession;
-import com.example.olgadominguez.todoachieved.model.TodoTask;
-import com.example.olgadominguez.todoachieved.model.TodoTaskDao;
+import com.example.olgadominguez.todoachieved.task.model.DaoSession;
+import com.example.olgadominguez.todoachieved.task.model.TodoTask;
+import com.example.olgadominguez.todoachieved.task.model.TodoTaskDao;
 
 import java.util.List;
 import java.util.concurrent.Callable;

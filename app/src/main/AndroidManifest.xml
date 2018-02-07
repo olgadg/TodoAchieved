@@ -8,14 +8,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name="com.example.olgadominguez.todoachieved.activity.tasklist.TaskListActivity">
+        <activity android:name="com.example.olgadominguez.todoachieved.task.list.TaskListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.olgadominguez.todoachieved.activity.taskform.TaskFormActivity"/>
+        <activity android:name="com.example.olgadominguez.todoachieved.task.form.TaskFormActivity"/>
 
 
     </application>

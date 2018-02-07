@@ -10,11 +10,12 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.example.olgadominguez.todoachieved.R;
-import com.example.olgadominguez.todoachieved.activity.taskform.TaskFormActivity;
+import com.example.olgadominguez.todoachieved.task.form.TaskFormActivity;
 import com.example.olgadominguez.todoachieved.database.DatabaseHelper;
 import com.example.olgadominguez.todoachieved.matchers.RecyclerViewMatcher;
-import com.example.olgadominguez.todoachieved.model.DaoSession;
-import com.example.olgadominguez.todoachieved.model.TodoTask;
+import com.example.olgadominguez.todoachieved.task.list.TaskListActivity;
+import com.example.olgadominguez.todoachieved.task.model.DaoSession;
+import com.example.olgadominguez.todoachieved.task.model.TodoTask;
 
 import org.junit.After;
 import org.junit.Before;

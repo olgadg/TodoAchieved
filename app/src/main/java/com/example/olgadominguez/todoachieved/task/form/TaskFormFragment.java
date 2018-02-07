@@ -1,4 +1,4 @@
-package com.example.olgadominguez.todoachieved.fragment.taskform;
+package com.example.olgadominguez.todoachieved.task.form;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -18,15 +18,12 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 
 import com.example.olgadominguez.todoachieved.R;
-import com.example.olgadominguez.todoachieved.activity.taskform.TaskFormActivity;
 import com.example.olgadominguez.todoachieved.database.DatabaseHelper;
-import com.example.olgadominguez.todoachieved.dialog.TaskDatePickerDialog;
-import com.example.olgadominguez.todoachieved.dialog.TaskTimePickerDialog;
-import com.example.olgadominguez.todoachieved.model.TodoTask;
-import com.example.olgadominguez.todoachieved.presenter.taskform.TaskFormPresenter;
-import com.example.olgadominguez.todoachieved.presenter.taskform.TaskFormView;
-import com.example.olgadominguez.todoachieved.view.DateTextView;
-import com.example.olgadominguez.todoachieved.view.TimeTextView;
+import com.example.olgadominguez.todoachieved.task.form.time.TaskDatePickerDialog;
+import com.example.olgadominguez.todoachieved.task.form.time.TaskTimePickerDialog;
+import com.example.olgadominguez.todoachieved.task.model.TodoTask;
+import com.example.olgadominguez.todoachieved.task.form.time.DateTextView;
+import com.example.olgadominguez.todoachieved.task.form.time.TimeTextView;
 
 import java.util.Calendar;
 

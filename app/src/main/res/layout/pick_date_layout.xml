@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <com.example.olgadominguez.todoachieved.view.DateTextView
+    <com.example.olgadominguez.todoachieved.task.form.time.DateTextView
         android:id="@+id/date_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -15,7 +15,7 @@
         android:clickable="true"
         tools:text="12/05/2016 16:30" />
 
-    <com.example.olgadominguez.todoachieved.view.TimeTextView
+    <com.example.olgadominguez.todoachieved.task.form.time.TimeTextView
         android:id="@+id/time_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

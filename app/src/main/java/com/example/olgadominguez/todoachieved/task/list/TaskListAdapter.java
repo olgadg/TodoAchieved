@@ -1,4 +1,4 @@
-package com.example.olgadominguez.todoachieved.adapter;
+package com.example.olgadominguez.todoachieved.task.list;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.olgadominguez.todoachieved.R;
-import com.example.olgadominguez.todoachieved.model.TodoTask;
+import com.example.olgadominguez.todoachieved.task.model.TodoTask;
 
 import java.util.ArrayList;
 import java.util.List;

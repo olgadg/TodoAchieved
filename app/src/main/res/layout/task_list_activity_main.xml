@@ -11,7 +11,7 @@
 
     <fragment
         android:id="@+id/task_list_fragment"
-        android:name="com.example.olgadominguez.todoachieved.fragment.tasklist.TaskListFragment"
+        android:name="com.example.olgadominguez.todoachieved.task.list.TaskListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout="@layout/task_list_fragment_main" />

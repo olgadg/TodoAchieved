@@ -3,8 +3,8 @@ package com.example.olgadominguez.todoachieved.database;
 
 import android.app.Application;
 
-import com.example.olgadominguez.todoachieved.model.DaoMaster;
-import com.example.olgadominguez.todoachieved.model.DaoSession;
+import com.example.olgadominguez.todoachieved.task.model.DaoMaster;
+import com.example.olgadominguez.todoachieved.task.model.DaoSession;
 
 import org.greenrobot.greendao.database.Database;
 

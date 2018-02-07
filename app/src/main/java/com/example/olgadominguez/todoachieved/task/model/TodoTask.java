@@ -1,4 +1,4 @@
-package com.example.olgadominguez.todoachieved.model;
+package com.example.olgadominguez.todoachieved.task.model;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
