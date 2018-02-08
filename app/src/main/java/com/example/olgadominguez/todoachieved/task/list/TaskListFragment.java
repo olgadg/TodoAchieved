@@ -20,16 +20,20 @@ import javax.inject.Inject;
 import java.util.List;
 
 import dagger.android.support.AndroidSupportInjection;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.observers.DisposableSingleObserver;
 
-public class TaskListFragment extends Fragment implements TaskListView, TaskListItemClickListener {
+public class TaskListFragment extends Fragment {
     private static final String TAG = "TaskListFragment";
 
     @Inject
     TaskListPresenter presenter;
 
-    private RecyclerView recyclerView;
     private TaskListAdapter adapter;
-    private FloatingActionButton fab;
+    private Disposable listDisposable = EmptyDisposable.INSTANCE;
+    private Disposable clickDisposable = EmptyDisposable.INSTANCE;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,11 +41,33 @@ public class TaskListFragment extends Fragment implements TaskListView, TaskList
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        listDisposable = presenter.getItems().subscribeWith(new DisposableSingleObserver<List<TodoTask>>() {
+            @Override
+            public void onSuccess(List<TodoTask> todoTasks) {
+                adapter.addItems(todoTasks);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    @Override
     public void onAttach(Context context) {
         AndroidSupportInjection.inject(this);
         super.onAttach(context);
-        presenter.setView(this);
-        presenter.getItems();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listDisposable.dispose();
+        clickDisposable.dispose();
     }
 
     @Override
@@ -57,18 +83,33 @@ public class TaskListFragment extends Fragment implements TaskListView, TaskList
         View rootView = inflater.inflate(R.layout.task_list_fragment_main, container, false);
         rootView.setTag(TAG);
 
-
-        recyclerView = rootView.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = rootView.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        adapter = new TaskListAdapter(this);
+        adapter = new TaskListAdapter();
         recyclerView.setAdapter(adapter);
+        adapter.getTaskPublisher().subscribeWith(new DisposableObserver<TodoTask>() {
+            @Override
+            public void onNext(TodoTask todoTask) {
+                onItemClick(todoTask);
+            }
 
-        fab = rootView.findViewById(R.id.floating_action_button);
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+
+        FloatingActionButton fab = rootView.findViewById(R.id.floating_action_button);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presenter.addTodoTask();
+                onAddTodoTask();
             }
         });
 
@@ -76,27 +117,14 @@ public class TaskListFragment extends Fragment implements TaskListView, TaskList
         return rootView;
     }
 
-    @Override
-    public void showTasks(List<TodoTask> todoTasks) {
-        adapter.addItems(todoTasks);
-    }
-
-    @Override
-    public void onFinishLoading() {
-        adapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onAddTodoTask() {
+    private void onAddTodoTask() {
         Intent intent = new Intent(getActivity(), TaskFormActivity.class);
         startActivityForResult(intent, TaskFormActivity.TASK_REQUEST_CODE);
     }
 
-    @Override
-    public void onItemClick(long taskId) {
+    private void onItemClick(TodoTask todoTask) {
         Intent intent = new Intent(getActivity(), TaskFormActivity.class);
-        intent.putExtra(TaskFormActivity.INTENT_TASK_ID, taskId);
+        intent.putExtra(TaskFormActivity.INTENT_TASK_ID, todoTask.getId());
         startActivityForResult(intent, TaskFormActivity.TASK_REQUEST_CODE);
-
     }
 }

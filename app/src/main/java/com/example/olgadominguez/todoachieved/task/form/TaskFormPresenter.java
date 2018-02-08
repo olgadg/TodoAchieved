@@ -4,30 +4,37 @@ import com.example.olgadominguez.todoachieved.task.TaskRepository;
 import com.example.olgadominguez.todoachieved.task.model.TodoTask;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.Calendar;
 
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Scheduler;
+import io.reactivex.Single;
+import io.reactivex.functions.Function;
+import io.reactivex.subjects.PublishSubject;
+
+import static com.example.olgadominguez.todoachieved.di.ApplicationModule.IO_SCHEDULER;
+import static com.example.olgadominguez.todoachieved.di.ApplicationModule.UI_SCHEDULER;
 
 public class TaskFormPresenter {
 
     private final TaskRepository taskRepository;
+    private final Scheduler uiScheduler;
+    private final Scheduler ioScheduler;
+    private final PublishSubject<Calendar> datePublisher = PublishSubject.create();
 
-    private TaskFormView view;
     private TodoTask todoTask;
     private Calendar taskDate;
 
     @Inject
-    public TaskFormPresenter(TaskRepository taskRepository) {
+    public TaskFormPresenter(TaskRepository taskRepository,
+                             @Named(UI_SCHEDULER) Scheduler uiScheduler,
+                             @Named(IO_SCHEDULER) Scheduler ioScheduler) {
         this.taskRepository = taskRepository;
+        this.uiScheduler = uiScheduler;
+        this.ioScheduler = ioScheduler;
     }
 
-    public void setView(TaskFormView view) {
-        this.view = view;
-    }
-
-    public void saveTodoTask(String taskName) {
+    public Single<TodoTask> saveTodoTask(String taskName) {
         if (todoTask == null) {
             todoTask = new TodoTask();
             todoTask.setCreatedDate(Calendar.getInstance().getTimeInMillis());
@@ -36,56 +43,26 @@ public class TaskFormPresenter {
         if (taskDate != null) {
             todoTask.setDate(taskDate.getTimeInMillis());
         }
-        saveTodoTask(todoTask);
+        return saveTodoTask(todoTask);
     }
 
-    public void saveTodoTask(final TodoTask todoTask) {
-
-        Subscriber<TodoTask> subscriber = new Subscriber<TodoTask>() {
-            @Override
-            public void onCompleted() {
-                view.onItemAdded(todoTask);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                view.onErrorSavingTask(e);
-
-            }
-
-            @Override
-            public void onNext(TodoTask todoTask) {
-
-            }
-        };
-        taskRepository.saveTask(todoTask)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber);
+    private Single<TodoTask> saveTodoTask(final TodoTask todoTask) {
+        return taskRepository.saveTask(todoTask)
+                .subscribeOn(ioScheduler)
+                .observeOn(uiScheduler);
     }
 
-    public void loadTodoTask(final long taskId) {
-
-        Subscriber<TodoTask> subscriber = new Subscriber<TodoTask>() {
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                view.onErrorLoadingTask(e);
-            }
-
-            @Override
-            public void onNext(TodoTask loadedTodoTask) {
-                setTodoTask(loadedTodoTask);
-            }
-        };
-        taskRepository.loadTask(taskId)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber);
+    public Single<TodoTask> loadTodoTask(final long taskId) {
+        return taskRepository.loadTask(taskId)
+                .map(new Function<TodoTask, TodoTask>() {
+                    @Override
+                    public TodoTask apply(TodoTask task) throws Exception {
+                        setTodoTask(task);
+                        return task;
+                    }
+                })
+                .subscribeOn(ioScheduler)
+                .observeOn(uiScheduler);
     }
 
     private void setTodoTask(TodoTask loadedTodoTask) {
@@ -94,7 +71,6 @@ public class TaskFormPresenter {
             taskDate = Calendar.getInstance();
             taskDate.setTimeInMillis(todoTask.getDate());
         }
-        view.onTaskLoaded(loadedTodoTask);
     }
 
     public void chooseDate(int year, int month, int dayOfTheMonth) {
@@ -102,13 +78,13 @@ public class TaskFormPresenter {
             taskDate = Calendar.getInstance();
         }
         taskDate.set(year, month, dayOfTheMonth);
-        view.onDateTimeChanged(taskDate);
+        datePublisher.onNext(taskDate);
     }
 
     public void chooseTime(int hour, int minute) {
         taskDate.set(Calendar.HOUR, hour);
         taskDate.set(Calendar.MINUTE, minute);
-        view.onDateTimeChanged(taskDate);
+        datePublisher.onNext(taskDate);
     }
 
     public Calendar getTaskDate() {
@@ -116,5 +92,9 @@ public class TaskFormPresenter {
             return taskDate;
         }
         return Calendar.getInstance();
+    }
+
+    public PublishSubject<Calendar> getDatePublisher() {
+        return datePublisher;
     }
 }

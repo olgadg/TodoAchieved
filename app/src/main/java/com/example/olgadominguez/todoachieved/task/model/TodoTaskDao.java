@@ -8,6 +8,8 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
+import io.reactivex.Single;
+
 @Dao
 public interface TodoTaskDao {
     @Query("SELECT * FROM todotask ORDER BY createdDate")
@@ -20,5 +22,5 @@ public interface TodoTaskDao {
     void update(TodoTask task);
 
     @Query("SELECT * FROM todotask WHERE id = :taskId")
-    TodoTask load(long taskId);
+    Single<TodoTask> load(long taskId);
 }

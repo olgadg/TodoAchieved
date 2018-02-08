@@ -29,12 +29,20 @@ import javax.inject.Inject;
 import java.util.Calendar;
 
 import dagger.android.support.AndroidSupportInjection;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.observers.DisposableSingleObserver;
 
-public class TaskFormFragment extends Fragment implements TaskFormView {
+public class TaskFormFragment extends Fragment {
     private static final String TAG = "TaskFormFragment";
 
     @Inject
     TaskFormPresenter presenter;
+
+    private Disposable loadDisposable = EmptyDisposable.INSTANCE;
+    private Disposable dateDisposable = EmptyDisposable.INSTANCE;
+    private Disposable saveDisposable = EmptyDisposable.INSTANCE;
 
     private EditText taskNameEditText;
     private DateTextView taskDateTextView;
@@ -50,7 +58,30 @@ public class TaskFormFragment extends Fragment implements TaskFormView {
     public void onAttach(Context context) {
         AndroidSupportInjection.inject(this);
         super.onAttach(context);
-        presenter.setView(this);
+        dateDisposable = presenter.getDatePublisher().subscribeWith(new DisposableObserver<Calendar>() {
+            @Override
+            public void onNext(Calendar taskDate) {
+                onDateTimeChanged(taskDate);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        loadDisposable.dispose();
+        dateDisposable.dispose();
+        saveDisposable.dispose();
     }
 
     @Override
@@ -79,7 +110,18 @@ public class TaskFormFragment extends Fragment implements TaskFormView {
         if (savedInstanceState == null) {
             long taskId = getActivity().getIntent().getLongExtra(TaskFormActivity.INTENT_TASK_ID, -1);
             if (taskId != -1) {
-                presenter.loadTodoTask(taskId);
+                loadDisposable = presenter.loadTodoTask(taskId)
+                        .subscribeWith(new DisposableSingleObserver<TodoTask>() {
+                            @Override
+                            public void onSuccess(TodoTask task) {
+                                onTaskLoaded(task);
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                onErrorLoadingTask(e);
+                            }
+                        });
             }
         }
         return rootView;
@@ -108,24 +150,33 @@ public class TaskFormFragment extends Fragment implements TaskFormView {
 
     private void onSaveButtonClick() {
         if (taskNameEditText.getText() != null) {
-            presenter.saveTodoTask(taskNameEditText.getText().toString());
+            saveDisposable = presenter
+                    .saveTodoTask(taskNameEditText.getText().toString())
+                    .subscribeWith(new DisposableSingleObserver<TodoTask>() {
+                        @Override
+                        public void onSuccess(TodoTask task) {
+                            onItemAdded(task);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            onErrorSavingTask(e);
+                        }
+                    });
         }
     }
 
-    @Override
-    public void onItemAdded(TodoTask todoTask) {
+    private void onItemAdded(TodoTask todoTask) {
         getActivity().setResult(Activity.RESULT_OK);
         getActivity().finish();
     }
 
-    @Override
-    public void onDateTimeChanged(Calendar taskDate) {
+    private void onDateTimeChanged(Calendar taskDate) {
         taskDateTextView.showDateTime(taskDate);
         taskTimeTextView.showDateTime(taskDate);
     }
 
-    @Override
-    public void onTaskLoaded(TodoTask todoTask) {
+    private void onTaskLoaded(TodoTask todoTask) {
         taskNameEditText.setText(todoTask.getText());
         if (todoTask.getDate() != null) {
             Calendar calendar = Calendar.getInstance();
@@ -138,14 +189,12 @@ public class TaskFormFragment extends Fragment implements TaskFormView {
         }
     }
 
-    @Override
-    public void onErrorSavingTask(Throwable e) {
+    private void onErrorSavingTask(Throwable e) {
         Log.e(TAG, getString(R.string.task_form_saving_error), e);
         showError(R.string.task_form_saving_error);
     }
 
-    @Override
-    public void onErrorLoadingTask(Throwable e) {
+    private void onErrorLoadingTask(Throwable e) {
         Log.e(TAG, getString(R.string.task_form_loading_error), e);
         showError(R.string.task_form_loading_error);
 
@@ -157,7 +206,7 @@ public class TaskFormFragment extends Fragment implements TaskFormView {
         }
     }
 
-    public void chooseDate() {
+    private void chooseDate() {
         new TaskDatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -166,7 +215,7 @@ public class TaskFormFragment extends Fragment implements TaskFormView {
         }, presenter.getTaskDate()).show();
     }
 
-    public void chooseTime() {
+    private void chooseTime() {
         new TaskTimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {

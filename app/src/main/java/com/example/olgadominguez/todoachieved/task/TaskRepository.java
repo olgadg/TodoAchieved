@@ -8,7 +8,7 @@ import javax.inject.Singleton;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import rx.Observable;
+import io.reactivex.Single;
 
 @Singleton
 public class TaskRepository {
@@ -19,8 +19,8 @@ public class TaskRepository {
         this.taskDao = taskDao;
     }
 
-    public Observable<List<TodoTask>> getTasks() {
-        return Observable.fromCallable(new Callable<List<TodoTask>>() {
+    public Single<List<TodoTask>> getTasks() {
+        return Single.fromCallable(new Callable<List<TodoTask>>() {
             @Override
             public List<TodoTask> call() throws Exception {
 
@@ -29,8 +29,8 @@ public class TaskRepository {
         });
     }
 
-    public Observable<TodoTask> saveTask(final TodoTask todoTask) {
-        return Observable.fromCallable(new Callable<TodoTask>() {
+    public Single<TodoTask> saveTask(final TodoTask todoTask) {
+        return Single.fromCallable(new Callable<TodoTask>() {
             @Override
             public TodoTask call() throws Exception {
                 if (todoTask.getId() != null) {
@@ -43,12 +43,7 @@ public class TaskRepository {
         });
     }
 
-    public Observable<TodoTask> loadTask(final long taskId) {
-        return Observable.fromCallable(new Callable<TodoTask>() {
-            @Override
-            public TodoTask call() throws Exception {
-                return taskDao.load(taskId);
-            }
-        });
+    public Single<TodoTask> loadTask(final long taskId) {
+        return taskDao.load(taskId);
     }
 }
