@@ -1,19 +1,22 @@
 package com.example.olgadominguez.todoachieved.task;
 
-import com.example.olgadominguez.todoachieved.task.model.DaoSession;
 import com.example.olgadominguez.todoachieved.task.model.TodoTask;
 import com.example.olgadominguez.todoachieved.task.model.TodoTaskDao;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 import rx.Observable;
 
+@Singleton
 public class TaskRepository {
     private final TodoTaskDao taskDao;
 
-    public TaskRepository(DaoSession daoSession) {
-        taskDao = daoSession.getTodoTaskDao();
+    @Inject
+    public TaskRepository(TodoTaskDao taskDao) {
+        this.taskDao = taskDao;
     }
 
     public Observable<List<TodoTask>> getTasks() {
@@ -21,9 +24,7 @@ public class TaskRepository {
             @Override
             public List<TodoTask> call() throws Exception {
 
-                return taskDao.queryBuilder()
-                        .orderAsc(TodoTaskDao.Properties.CreatedDate)
-                        .build().list();
+                return taskDao.list();
             }
         });
     }
@@ -33,9 +34,9 @@ public class TaskRepository {
             @Override
             public TodoTask call() throws Exception {
                 if (todoTask.getId() != null) {
-                    taskDao.updateInTx(todoTask);
+                    taskDao.update(todoTask);
                 } else {
-                    taskDao.insertInTx(todoTask);
+                    taskDao.insert(todoTask);
                 }
                 return todoTask;
             }
@@ -46,9 +47,7 @@ public class TaskRepository {
         return Observable.fromCallable(new Callable<TodoTask>() {
             @Override
             public TodoTask call() throws Exception {
-
-                TodoTask todoTask = taskDao.load(taskId);
-                return todoTask;
+                return taskDao.load(taskId);
             }
         });
     }

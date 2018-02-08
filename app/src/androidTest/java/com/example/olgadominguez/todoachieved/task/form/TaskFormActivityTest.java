@@ -1,20 +1,20 @@
-package com.example.olgadominguez.todoachieved.activity.taskform;
+package com.example.olgadominguez.todoachieved.task.form;
 
-
-import android.app.Application;
+import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.example.olgadominguez.todoachieved.R;
-import com.example.olgadominguez.todoachieved.database.DatabaseHelper;
-import com.example.olgadominguez.todoachieved.task.form.TaskFormActivity;
-import com.example.olgadominguez.todoachieved.task.model.DaoSession;
+import com.example.olgadominguez.todoachieved.TodoApplication;
+import com.example.olgadominguez.todoachieved.di.DaggerTestApplicationComponent;
+import com.example.olgadominguez.todoachieved.di.TestApplicationComponent;
 import com.example.olgadominguez.todoachieved.task.model.TodoTask;
+import com.example.olgadominguez.todoachieved.task.model.TodoTaskDao;
 
+import javax.inject.Inject;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,32 +31,33 @@ import static org.hamcrest.Matchers.is;
 public class TaskFormActivityTest {
 
     private static final String TASK_TEXT = "Another task";
-    private DaoSession daoSession;
+    @Inject
+    TodoTaskDao taskDao;
 
     @Rule
-    public ActivityTestRule<TaskFormActivity> activityTestRule = new ActivityTestRule<TaskFormActivity>(TaskFormActivity.class) {
-        protected void beforeActivityLaunched() {
-            daoSession = DatabaseHelper.getDaoSession((Application) InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext());
-        }
-    };
+    public ActivityTestRule<TaskFormActivity> activityTestRule = new ActivityTestRule<>(TaskFormActivity.class, false, false);
 
     @Before
-    public void setup() {
-        daoSession = DatabaseHelper.getDaoSession((Application) InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext());
+    public void setUp() {
+        TodoApplication application = (TodoApplication) InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
+        TestApplicationComponent component = DaggerTestApplicationComponent
+                .builder()
+                .application(application)
+                .build();
+        component.inject(application);
+        component.inject(this);
     }
 
-    @After
-    public void tearDown() {
-        daoSession.getTodoTaskDao().deleteAll();
-    }
 
     @Test
     public void addItem() {
 
+        activityTestRule.launchActivity(new Intent());
+
         onView(withId(R.id.task_edittext)).perform(typeText(TASK_TEXT));
         onView(withId(R.id.done)).perform(click());
 
-        List<TodoTask> tasks = daoSession.getTodoTaskDao().queryBuilder().list();
+        List<TodoTask> tasks = taskDao.list();
         assertThat("Task added", tasks.get(0).getText(), is(TASK_TEXT));
     }
 }

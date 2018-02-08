@@ -3,6 +3,7 @@ package com.example.olgadominguez.todoachieved.task.form;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -18,18 +19,22 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 
 import com.example.olgadominguez.todoachieved.R;
-import com.example.olgadominguez.todoachieved.database.DatabaseHelper;
+import com.example.olgadominguez.todoachieved.task.form.time.DateTextView;
 import com.example.olgadominguez.todoachieved.task.form.time.TaskDatePickerDialog;
 import com.example.olgadominguez.todoachieved.task.form.time.TaskTimePickerDialog;
-import com.example.olgadominguez.todoachieved.task.model.TodoTask;
-import com.example.olgadominguez.todoachieved.task.form.time.DateTextView;
 import com.example.olgadominguez.todoachieved.task.form.time.TimeTextView;
+import com.example.olgadominguez.todoachieved.task.model.TodoTask;
 
+import javax.inject.Inject;
 import java.util.Calendar;
+
+import dagger.android.support.AndroidSupportInjection;
 
 public class TaskFormFragment extends Fragment implements TaskFormView {
     private static final String TAG = "TaskFormFragment";
-    private TaskFormPresenter presenter;
+
+    @Inject
+    TaskFormPresenter presenter;
 
     private EditText taskNameEditText;
     private DateTextView taskDateTextView;
@@ -39,7 +44,13 @@ public class TaskFormFragment extends Fragment implements TaskFormView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        presenter = new TaskFormPresenter(this, DatabaseHelper.getDaoSession(getActivity().getApplication()));
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        AndroidSupportInjection.inject(this);
+        super.onAttach(context);
+        presenter.setView(this);
     }
 
     @Override
@@ -47,15 +58,15 @@ public class TaskFormFragment extends Fragment implements TaskFormView {
         View rootView = inflater.inflate(R.layout.task_form_fragment_main, container, false);
         rootView.setTag(TAG);
 
-        taskNameEditText = (EditText) rootView.findViewById(R.id.task_edittext);
-        taskDateTextView = (DateTextView) rootView.findViewById(R.id.date_textview);
+        taskNameEditText = rootView.findViewById(R.id.task_edittext);
+        taskDateTextView = rootView.findViewById(R.id.date_textview);
         taskDateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 chooseDate();
             }
         });
-        taskTimeTextView = (TimeTextView) rootView.findViewById(R.id.time_textview);
+        taskTimeTextView = rootView.findViewById(R.id.time_textview);
         taskTimeTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,7 +85,6 @@ public class TaskFormFragment extends Fragment implements TaskFormView {
         return rootView;
     }
 
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -87,7 +97,7 @@ public class TaskFormFragment extends Fragment implements TaskFormView {
             case R.id.done:
                 onSaveButtonClick();
                 return true;
-            case android.R.id.home :
+            case android.R.id.home:
                 getActivity().finish();
                 return true;
             default:

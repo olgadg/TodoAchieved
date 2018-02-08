@@ -1,51 +1,61 @@
 package com.example.olgadominguez.todoachieved.task.model;
 
-import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.NotNull;
-
-import org.greenrobot.greendao.annotation.Generated;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 @Entity
 public class TodoTask {
-    @Id
+    @PrimaryKey
     private Long id;
 
-    @NotNull
+    @NonNull
     private String text;
     private Long createdDate;
     private Long date;
-    @Generated(hash = 2104567330)
-    public TodoTask(Long id, @NotNull String text, Long createdDate, Long date) {
+
+    @Ignore
+    public TodoTask(Long id, @NonNull String text, Long createdDate, Long date) {
         this.id = id;
         this.text = text;
         this.createdDate = createdDate;
         this.date = date;
     }
-    @Generated(hash = 1890195492)
+
     public TodoTask() {
+
     }
+
     public Long getId() {
-        return this.id;
+        return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
+
+    @NonNull
     public String getText() {
-        return this.text;
+        return text;
     }
-    public void setText(String text) {
+
+    public void setText(@NonNull String text) {
         this.text = text;
     }
+
     public Long getCreatedDate() {
-        return this.createdDate;
+        return createdDate;
     }
+
     public void setCreatedDate(Long createdDate) {
         this.createdDate = createdDate;
     }
+
     public Long getDate() {
-        return this.date;
+        return date;
     }
+
     public void setDate(Long date) {
         this.date = date;
     }

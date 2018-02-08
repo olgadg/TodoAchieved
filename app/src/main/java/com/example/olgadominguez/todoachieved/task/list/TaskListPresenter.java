@@ -1,9 +1,9 @@
 package com.example.olgadominguez.todoachieved.task.list;
 
-import com.example.olgadominguez.todoachieved.task.model.DaoSession;
-import com.example.olgadominguez.todoachieved.task.model.TodoTask;
 import com.example.olgadominguez.todoachieved.task.TaskRepository;
+import com.example.olgadominguez.todoachieved.task.model.TodoTask;
 
+import javax.inject.Inject;
 import java.util.List;
 
 import rx.Subscriber;
@@ -15,8 +15,12 @@ public class TaskListPresenter {
 
     private TaskListView view;
 
-    public TaskListPresenter(TaskListView view, DaoSession daoSession) {
-        taskRepository = new TaskRepository(daoSession);
+    @Inject
+    public TaskListPresenter(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
+    }
+
+    public void setView(TaskListView view) {
         this.view = view;
     }
 

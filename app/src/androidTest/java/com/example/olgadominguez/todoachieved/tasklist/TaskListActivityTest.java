@@ -1,22 +1,24 @@
-package com.example.olgadominguez.todoachieved.activity.tasklist;
-
+package com.example.olgadominguez.todoachieved.tasklist;
 
 import android.app.Activity;
-import android.app.Application;
 import android.app.Instrumentation;
+import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.example.olgadominguez.todoachieved.R;
-import com.example.olgadominguez.todoachieved.database.DatabaseHelper;
+import com.example.olgadominguez.todoachieved.TodoApplication;
+import com.example.olgadominguez.todoachieved.di.DaggerTestApplicationComponent;
+import com.example.olgadominguez.todoachieved.di.TestApplicationComponent;
 import com.example.olgadominguez.todoachieved.matchers.RecyclerViewMatcher;
 import com.example.olgadominguez.todoachieved.task.form.TaskFormActivity;
 import com.example.olgadominguez.todoachieved.task.list.TaskListActivity;
-import com.example.olgadominguez.todoachieved.task.model.DaoSession;
 import com.example.olgadominguez.todoachieved.task.model.TodoTask;
+import com.example.olgadominguez.todoachieved.task.model.TodoTaskDao;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,21 +41,25 @@ import static org.hamcrest.Matchers.not;
 @RunWith(AndroidJUnit4.class)
 public class TaskListActivityTest {
 
-    private DaoSession daoSession;
     private static final int TASK_COUNT = 10;
     private static final String TASK_PREFIX = "Task ";
 
+    @Inject
+    TodoTaskDao todoTaskDao;
+
     @Rule
-    public ActivityTestRule<TaskListActivity> activityTestRule = new ActivityTestRule<TaskListActivity>(TaskListActivity.class) {
-        protected void beforeActivityLaunched() {
-            daoSession = DatabaseHelper.getDaoSession((Application) InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext());
-            addTasks(TASK_COUNT);
-        }
-    };
+    public ActivityTestRule<TaskListActivity> activityTestRule = new ActivityTestRule<>(TaskListActivity.class, false, false);
 
     @Before
-    public void setup() {
-
+    public void setUp() {
+        TodoApplication application = (TodoApplication) InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
+        TestApplicationComponent component = DaggerTestApplicationComponent
+                .builder()
+                .application(application)
+                .build();
+        component.inject(application);
+        component.inject(this);
+        addTasks(TASK_COUNT);
         Intents.init();
         intending(not(hasComponent(TaskListActivity.class.getCanonicalName()))).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, null));
     }
@@ -61,22 +67,20 @@ public class TaskListActivityTest {
     private List<TodoTask> addTasks(int taskCount) {
         List<TodoTask> sampleTasks = new ArrayList<>();
         for (int i = 0; i < taskCount; i++) {
-            sampleTasks.add(new TodoTask((long) i, TASK_PREFIX + i, new Date().getTime(), new Date().getTime()));
+            todoTaskDao.insert(new TodoTask((long) i, TASK_PREFIX + i, new Date().getTime(), new Date().getTime()));
         }
-        daoSession.getTodoTaskDao().deleteAll();
-        daoSession.getTodoTaskDao().insertInTx(sampleTasks);
         return sampleTasks;
     }
 
     @After
     public void tearDown() {
-        daoSession.getTodoTaskDao().deleteAll();
         Intents.release();
     }
 
     @Test
     public void showItems() {
 
+        activityTestRule.launchActivity(new Intent());
         for (int i = 0; i < TASK_COUNT; i++) {
             onView(new RecyclerViewMatcher((R.id.recycler_view)).atPosition(i))
                     .check(matches(hasDescendant(withText(TASK_PREFIX + i))));
@@ -85,6 +89,8 @@ public class TaskListActivityTest {
 
     @Test
     public void addItem() {
+
+        activityTestRule.launchActivity(new Intent());
 
         onView(withId(R.id.floating_action_button)).perform(click());
 

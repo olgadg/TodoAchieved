@@ -1,10 +1,9 @@
 package com.example.olgadominguez.todoachieved.task.form;
 
-
-import com.example.olgadominguez.todoachieved.task.model.DaoSession;
-import com.example.olgadominguez.todoachieved.task.model.TodoTask;
 import com.example.olgadominguez.todoachieved.task.TaskRepository;
+import com.example.olgadominguez.todoachieved.task.model.TodoTask;
 
+import javax.inject.Inject;
 import java.util.Calendar;
 
 import rx.Subscriber;
@@ -19,8 +18,12 @@ public class TaskFormPresenter {
     private TodoTask todoTask;
     private Calendar taskDate;
 
-    public TaskFormPresenter(TaskFormView view, DaoSession daoSession) {
-        taskRepository = new TaskRepository(daoSession);
+    @Inject
+    public TaskFormPresenter(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
+    }
+
+    public void setView(TaskFormView view) {
         this.view = view;
     }
 
@@ -37,7 +40,6 @@ public class TaskFormPresenter {
     }
 
     public void saveTodoTask(final TodoTask todoTask) {
-
 
         Subscriber<TodoTask> subscriber = new Subscriber<TodoTask>() {
             @Override
@@ -63,7 +65,6 @@ public class TaskFormPresenter {
     }
 
     public void loadTodoTask(final long taskId) {
-
 
         Subscriber<TodoTask> subscriber = new Subscriber<TodoTask>() {
             @Override

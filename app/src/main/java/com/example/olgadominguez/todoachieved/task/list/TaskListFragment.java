@@ -1,6 +1,7 @@
 package com.example.olgadominguez.todoachieved.task.list;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,27 +14,33 @@ import android.view.ViewGroup;
 
 import com.example.olgadominguez.todoachieved.R;
 import com.example.olgadominguez.todoachieved.task.form.TaskFormActivity;
-import com.example.olgadominguez.todoachieved.task.list.TaskListAdapter;
-import com.example.olgadominguez.todoachieved.task.list.TaskListItemClickListener;
-import com.example.olgadominguez.todoachieved.database.DatabaseHelper;
 import com.example.olgadominguez.todoachieved.task.model.TodoTask;
-import com.example.olgadominguez.todoachieved.task.list.TaskListPresenter;
-import com.example.olgadominguez.todoachieved.task.list.TaskListView;
 
+import javax.inject.Inject;
 import java.util.List;
+
+import dagger.android.support.AndroidSupportInjection;
 
 public class TaskListFragment extends Fragment implements TaskListView, TaskListItemClickListener {
     private static final String TAG = "TaskListFragment";
 
+    @Inject
+    TaskListPresenter presenter;
+
     private RecyclerView recyclerView;
     private TaskListAdapter adapter;
-    private TaskListPresenter presenter;
     private FloatingActionButton fab;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new TaskListPresenter(this, DatabaseHelper.getDaoSession(getActivity().getApplication()));
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        AndroidSupportInjection.inject(this);
+        super.onAttach(context);
+        presenter.setView(this);
         presenter.getItems();
     }
 
@@ -51,13 +58,13 @@ public class TaskListFragment extends Fragment implements TaskListView, TaskList
         rootView.setTag(TAG);
 
 
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        recyclerView = rootView.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         adapter = new TaskListAdapter(this);
         recyclerView.setAdapter(adapter);
 
-        fab = (FloatingActionButton) rootView.findViewById(R.id.floating_action_button);
+        fab = rootView.findViewById(R.id.floating_action_button);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
