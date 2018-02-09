@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "571671031171",
+    "firebase_url": "https://todoachieved.firebaseio.com",
+    "project_id": "todoachieved",
+    "storage_bucket": "todoachieved.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571671031171:android:f47bab3d36ba496f",
+        "android_client_info": {
+          "package_name": "com.cottondroid.todoachieved"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "571671031171-lhek9d0n1a01ssioolashp3dpuq9slal.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQkzZnDSpl4DNkiLMT_MUNhkNHhQGjnjQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

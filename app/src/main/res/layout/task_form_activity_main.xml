@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/task_form_fragment"
-        android:name="com.example.olgadominguez.todoachieved.task.form.TaskFormFragment"
+        android:name="com.cottondroid.todoachieved.task.form.TaskFormFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout="@layout/task_form_fragment_main" />

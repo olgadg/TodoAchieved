@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.example.olgadominguez.todoachieved">
+  package="com.cottondroid.todoachieved">
 
   <application
     android:name=".TodoApplication"
@@ -9,14 +9,14 @@
     android:supportsRtl="true"
     android:theme="@style/AppTheme">
 
-    <activity android:name="com.example.olgadominguez.todoachieved.task.list.TaskListActivity">
+    <activity android:name=".task.list.TaskListActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
 
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
-    <activity android:name="com.example.olgadominguez.todoachieved.task.form.TaskFormActivity" />
+    <activity android:name=".task.form.TaskFormActivity" />
 
 
   </application>
