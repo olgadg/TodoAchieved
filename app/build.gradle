@@ -25,8 +25,6 @@ android {
     }
 }
 
-apply plugin: 'org.greenrobot.greendao'
-
 dependencies {
     //espresso
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
