@@ -1,17 +1,14 @@
 package com.example.olgadominguez.todoachieved.task.form.time;
 
-
 import android.content.Context;
 import android.util.AttributeSet;
 
 import com.example.olgadominguez.todoachieved.R;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+import java.text.DateFormat;
+import java.util.Calendar;
 
 public class TimeTextView extends DateTimeTextView {
-
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm", Locale.ROOT);
 
     public TimeTextView(Context context) {
         super(context);
@@ -25,13 +22,17 @@ public class TimeTextView extends DateTimeTextView {
         super(context, attrs, defStyleAttr);
     }
 
-    public TimeTextView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
+    @Override
+    public DateFormat getDateFormat() {
+        return DateFormat.getTimeInstance();
     }
 
-    @Override
-    public SimpleDateFormat getDateFormat() {
-        return DATE_FORMAT;
+    public void showDateTime(Calendar calendar) {
+        if (calendar.get(Calendar.HOUR_OF_DAY) == 0 && calendar.get(Calendar.MINUTE) == 0) {
+            setText(getDefaultText());
+        } else {
+            super.showDateTime(calendar);
+        }
     }
 
     @Override

@@ -101,6 +101,7 @@ public class TaskFormFragment extends Fragment {
         taskTimeTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                presenter.chooseToday();
                 chooseTime();
             }
         });
@@ -155,7 +156,7 @@ public class TaskFormFragment extends Fragment {
                     .subscribeWith(new DisposableSingleObserver<TodoTask>() {
                         @Override
                         public void onSuccess(TodoTask task) {
-                            onItemAdded(task);
+                            onItemAdded();
                         }
 
                         @Override
@@ -166,7 +167,7 @@ public class TaskFormFragment extends Fragment {
         }
     }
 
-    private void onItemAdded(TodoTask todoTask) {
+    private void onItemAdded() {
         getActivity().setResult(Activity.RESULT_OK);
         getActivity().finish();
     }
@@ -211,6 +212,7 @@ public class TaskFormFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 presenter.chooseDate(year, month, dayOfMonth);
+                chooseTime();
             }
         }, presenter.getTaskDate()).show();
     }

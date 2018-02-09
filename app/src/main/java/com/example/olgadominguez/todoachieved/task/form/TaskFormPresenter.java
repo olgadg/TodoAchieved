@@ -73,6 +73,11 @@ public class TaskFormPresenter {
         }
     }
 
+    public void chooseToday() {
+        Calendar instance = Calendar.getInstance();
+        chooseDate(instance.get(Calendar.YEAR), instance.get(Calendar.MONTH), instance.get(Calendar.DAY_OF_MONTH));
+    }
+
     public void chooseDate(int year, int month, int dayOfTheMonth) {
         if (taskDate == null) {
             taskDate = Calendar.getInstance();
@@ -82,8 +87,9 @@ public class TaskFormPresenter {
     }
 
     public void chooseTime(int hour, int minute) {
-        taskDate.set(Calendar.HOUR, hour);
+        taskDate.set(Calendar.HOUR_OF_DAY, hour);
         taskDate.set(Calendar.MINUTE, minute);
+        taskDate.set(Calendar.SECOND, 0);
         datePublisher.onNext(taskDate);
     }
 

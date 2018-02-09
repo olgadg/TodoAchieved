@@ -9,4 +9,5 @@
     <string name="task_form_choose_time" >Choose time</string>
     <string name="task_form_saving_error">There was an error saving the task, please, close and open again.</string>
     <string name="task_form_loading_error">There was an error loading the task, please, go back and try again.</string>
+  <string name="no_time">No time</string>
 </resources>
