@@ -8,12 +8,13 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
 import io.reactivex.Single;
 
 @Dao
 public interface TodoTaskDao {
     @Query("SELECT * FROM todotask ORDER BY createdDate")
-    List<TodoTask> list();
+    Flowable<List<TodoTask>> list();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(TodoTask task);

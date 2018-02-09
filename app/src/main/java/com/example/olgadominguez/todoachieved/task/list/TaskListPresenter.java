@@ -7,8 +7,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.List;
 
+import io.reactivex.Flowable;
 import io.reactivex.Scheduler;
-import io.reactivex.Single;
 
 import static com.example.olgadominguez.todoachieved.di.ApplicationModule.IO_SCHEDULER;
 import static com.example.olgadominguez.todoachieved.di.ApplicationModule.UI_SCHEDULER;
@@ -27,7 +27,7 @@ public class TaskListPresenter {
         this.ioScheduler = ioScheduler;
     }
 
-    public Single<List<TodoTask>> getItems() {
+    public Flowable<List<TodoTask>> getItems() {
         return taskRepository.getTasks()
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler);

@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import io.reactivex.Flowable;
 import io.reactivex.Single;
 
 @Singleton
@@ -19,14 +20,8 @@ public class TaskRepository {
         this.taskDao = taskDao;
     }
 
-    public Single<List<TodoTask>> getTasks() {
-        return Single.fromCallable(new Callable<List<TodoTask>>() {
-            @Override
-            public List<TodoTask> call() throws Exception {
-
-                return taskDao.list();
-            }
-        });
+    public Flowable<List<TodoTask>> getTasks() {
+       return taskDao.list();
     }
 
     public Single<TodoTask> saveTask(final TodoTask todoTask) {

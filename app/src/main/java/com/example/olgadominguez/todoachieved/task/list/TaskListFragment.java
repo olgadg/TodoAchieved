@@ -20,10 +20,11 @@ import javax.inject.Inject;
 import java.util.List;
 
 import dagger.android.support.AndroidSupportInjection;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.observers.DisposableObserver;
-import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.subscribers.ResourceSubscriber;
 
 public class TaskListFragment extends Fragment {
     private static final String TAG = "TaskListFragment";
@@ -32,7 +33,7 @@ public class TaskListFragment extends Fragment {
     TaskListPresenter presenter;
 
     private TaskListAdapter adapter;
-    private Disposable listDisposable = EmptyDisposable.INSTANCE;
+    private CompositeDisposable listDisposable = new CompositeDisposable();
     private Disposable clickDisposable = EmptyDisposable.INSTANCE;
 
     @Override
@@ -41,11 +42,13 @@ public class TaskListFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        listDisposable = presenter.getItems().subscribeWith(new DisposableSingleObserver<List<TodoTask>>() {
+    public void onAttach(Context context) {
+        AndroidSupportInjection.inject(this);
+        super.onAttach(context);
+        listDisposable = new CompositeDisposable();
+        ResourceSubscriber<List<TodoTask>> resourceSubscriber = presenter.getItems().subscribeWith(new ResourceSubscriber<List<TodoTask>>() {
             @Override
-            public void onSuccess(List<TodoTask> todoTasks) {
+            public void onNext(List<TodoTask> todoTasks) {
                 adapter.addItems(todoTasks);
                 adapter.notifyDataSetChanged();
             }
@@ -54,13 +57,13 @@ public class TaskListFragment extends Fragment {
             public void onError(Throwable e) {
 
             }
-        });
-    }
 
-    @Override
-    public void onAttach(Context context) {
-        AndroidSupportInjection.inject(this);
-        super.onAttach(context);
+            @Override
+            public void onComplete() {
+
+            }
+        });
+        listDisposable.add(resourceSubscriber);
     }
 
     @Override
@@ -112,7 +115,6 @@ public class TaskListFragment extends Fragment {
                 onAddTodoTask();
             }
         });
-
 
         return rootView;
     }

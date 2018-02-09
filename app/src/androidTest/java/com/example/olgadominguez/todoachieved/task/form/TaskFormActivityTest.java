@@ -57,7 +57,7 @@ public class TaskFormActivityTest {
         onView(withId(R.id.task_edittext)).perform(typeText(TASK_TEXT));
         onView(withId(R.id.done)).perform(click());
 
-        List<TodoTask> tasks = taskDao.list();
+        List<TodoTask> tasks = taskDao.list().blockingFirst();
         assertThat("Task added", tasks.get(0).getText(), is(TASK_TEXT));
     }
 }
