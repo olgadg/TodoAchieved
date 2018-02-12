@@ -1,6 +1,7 @@
 package com.cottondroid.todoachieved.di;
 
 import com.cottondroid.todoachieved.TodoApplication;
+import com.cottondroid.todoachieved.auth.TestAuthenticationModule;
 import com.cottondroid.todoachieved.database.TestDatabaseModule;
 import com.cottondroid.todoachieved.task.form.TaskFormActivityTest;
 import com.cottondroid.todoachieved.task.form.TaskFormInjection;
@@ -20,6 +21,7 @@ import dagger.android.support.AndroidSupportInjectionModule;
         AndroidSupportInjectionModule.class,
         ApplicationModule.class,
         TestDatabaseModule.class,
+        TestAuthenticationModule.class,
         TaskListInjection.class,
         TaskFormInjection.class,
 })

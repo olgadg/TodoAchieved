@@ -1,6 +1,18 @@
 apply plugin: 'com.android.application'
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
+    signingConfigs {
+        config {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
     compileSdkVersion 26
     buildToolsVersion "27.0.3"
     defaultConfig {
@@ -21,6 +33,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
 }
@@ -50,10 +63,17 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxjava:2.1.8'
 
     //room
-    implementation "android.arch.persistence.room:runtime:1.0.0"
+    implementation 'android.arch.persistence.room:runtime:1.0.0'
     compile 'android.arch.persistence.room:rxjava2:1.0.0'
     annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
+
+    // Firebase
+    compile 'com.google.firebase:firebase-core:11.8.0'
+    compile 'com.firebaseui:firebase-ui-auth:3.2.1'
 
     //unit tests
     testCompile 'junit:junit:4.12'
 }
+
+//Required by firebase
+apply plugin: 'com.google.gms.google-services'

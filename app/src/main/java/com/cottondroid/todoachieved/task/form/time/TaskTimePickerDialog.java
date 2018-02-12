@@ -39,7 +39,7 @@ public class TaskTimePickerDialog extends TimePickerDialog {
 
     private TaskTimePickerDialog(Context context, final OnTimeSetListener listener, int hourOfDay, int minute, boolean is24HourView) {
         super(context, listener, hourOfDay, minute, is24HourView);
-        setButton(DialogInterface.BUTTON_NEUTRAL, context.getString(R.string.no_time), new DialogInterface.OnClickListener() {
+        setButton(DialogInterface.BUTTON_NEUTRAL, context.getString(R.string.task_form_no_time), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 listener.onTimeSet(null, NO_TIME_HOUR, NO_TIME_MINUTE);

@@ -7,8 +7,6 @@ import android.support.v7.widget.Toolbar;
 import com.cottondroid.todoachieved.R;
 
 public class TaskFormActivity extends AppCompatActivity {
-
-    public static final int TASK_REQUEST_CODE = 0;
     public static final String INTENT_TASK_ID = "intent_task_id";
 
     @Override
