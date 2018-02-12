@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 
 @Entity
 public class TodoTask {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     private Long id;
 
     @NonNull

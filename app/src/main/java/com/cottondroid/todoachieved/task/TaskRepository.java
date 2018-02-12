@@ -1,41 +1,77 @@
 package com.cottondroid.todoachieved.task;
 
+import com.cottondroid.todoachieved.auth.AuthenticationRepository;
 import com.cottondroid.todoachieved.task.model.TodoTask;
 import com.cottondroid.todoachieved.task.model.TodoTaskDao;
+import com.cottondroid.todoachieved.task.network.TaskUpdateListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DatabaseReference;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import io.reactivex.Flowable;
 import io.reactivex.Single;
+import io.reactivex.SingleSource;
+import io.reactivex.functions.Function;
+
+import static com.cottondroid.todoachieved.network.NetworkModule.TASKS_DB;
 
 @Singleton
 public class TaskRepository {
+
     private final TodoTaskDao taskDao;
+    private final Provider<DatabaseReference> dbRefeferenceProvider;
+    private final AuthenticationRepository authenticationRepository;
 
     @Inject
-    public TaskRepository(TodoTaskDao taskDao) {
+    public TaskRepository(TodoTaskDao taskDao,
+                          @Named(TASKS_DB) Provider<DatabaseReference> dbRefeferenceProvider,
+                          AuthenticationRepository authenticationRepository) {
         this.taskDao = taskDao;
+        this.dbRefeferenceProvider = dbRefeferenceProvider;
+        this.authenticationRepository = authenticationRepository;
     }
 
     public Flowable<List<TodoTask>> getTasks() {
-       return taskDao.list();
+        return taskDao.list();
+    }
+
+    public void registerToTaskUpdates(TaskUpdateListener taskListener) {
+        if (authenticationRepository.isLoggedIn()) {
+            DatabaseReference dbReference = dbRefeferenceProvider.get();
+            dbReference.addListenerForSingleValueEvent(taskListener);
+            dbReference.addChildEventListener(taskListener);
+        }
+    }
+
+    public void unregisterFromTaskUpdates(TaskUpdateListener taskListener) {
+        dbRefeferenceProvider.get().removeEventListener((ChildEventListener) taskListener);
     }
 
     public Single<TodoTask> saveTask(final TodoTask todoTask) {
-        return Single.fromCallable(new Callable<TodoTask>() {
-            @Override
-            public TodoTask call() throws Exception {
-                if (todoTask.getId() != null) {
-                    taskDao.update(todoTask);
-                } else {
-                    taskDao.insert(todoTask);
-                }
-                return todoTask;
-            }
-        });
+        return taskDao.insert(todoTask)
+                .flatMap(new Function<Long, SingleSource<? extends TodoTask>>() {
+                    @Override
+                    public SingleSource<? extends TodoTask> apply(Long id) throws Exception {
+                        return taskDao.load(id);
+                    }
+                })
+                .map(new Function<TodoTask, TodoTask>() {
+                    @Override
+                    public TodoTask apply(TodoTask todoTask) throws Exception {
+                        if (authenticationRepository.isLoggedIn()) {
+                            dbRefeferenceProvider
+                                    .get()
+                                    .child(String.valueOf(todoTask.getId()))
+                                    .setValue(todoTask);
+                        }
+                        return todoTask;
+                    }
+                });
     }
 
     public Single<TodoTask> loadTask(final long taskId) {

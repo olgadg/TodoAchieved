@@ -84,6 +84,7 @@ public class TaskListFragment extends Fragment {
         super.onDetach();
         listDisposable.dispose();
         clickDisposable.dispose();
+        presenter.onDetach();
     }
 
     @Override
@@ -99,7 +100,7 @@ public class TaskListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.login:
-                startActivity(authenticationLauncher.startLoginActivityIntent());
+                startActivityForResult(authenticationLauncher.startLoginActivityIntent(), RC_SIGN_IN);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -111,6 +112,7 @@ public class TaskListFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN && resultCode == RESULT_OK && getActivity() != null) {
             getActivity().invalidateOptionsMenu();
+            presenter.onLogin();
         }
     }
 

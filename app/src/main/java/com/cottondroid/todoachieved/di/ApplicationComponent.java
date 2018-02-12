@@ -3,6 +3,7 @@ package com.cottondroid.todoachieved.di;
 import com.cottondroid.todoachieved.TodoApplication;
 import com.cottondroid.todoachieved.auth.AuthenticationModule;
 import com.cottondroid.todoachieved.database.DatabaseModule;
+import com.cottondroid.todoachieved.network.NetworkModule;
 import com.cottondroid.todoachieved.task.form.TaskFormInjection;
 import com.cottondroid.todoachieved.task.list.TaskListInjection;
 
@@ -20,6 +21,7 @@ import dagger.android.support.AndroidSupportInjectionModule;
         ApplicationModule.class,
         DatabaseModule.class,
         AuthenticationModule.class,
+        NetworkModule.class,
         TaskListInjection.class,
         TaskFormInjection.class,
 })
