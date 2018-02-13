@@ -37,16 +37,20 @@ public class TaskUpdateListener implements ChildEventListener, ValueEventListene
 
     @Override
     public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-        final TodoTask todoTask = dataSnapshot.getValue(TodoTask.class);
-        taskDao.insert(todoTask)
-                .subscribeOn(ioScheduler).observeOn(uiScheduler).subscribe();
+        final TodoTask todoTask = fromSnapshot(dataSnapshot);
+        if (todoTask != null) {
+            taskDao.insertOrReplace(todoTask)
+                    .subscribeOn(ioScheduler).observeOn(uiScheduler).subscribe();
+        }
     }
 
     @Override
     public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-        final TodoTask todoTask = dataSnapshot.getValue(TodoTask.class);
-        taskDao.update(todoTask)
-                .subscribeOn(ioScheduler).observeOn(uiScheduler).subscribe();
+        final TodoTask todoTask = fromSnapshot(dataSnapshot);
+        if (todoTask != null) {
+            taskDao.update(todoTask)
+                    .subscribeOn(ioScheduler).observeOn(uiScheduler).subscribe();
+        }
     }
 
     @Override
@@ -69,11 +73,21 @@ public class TaskUpdateListener implements ChildEventListener, ValueEventListene
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
         List<TodoTask> todoTasks = new ArrayList<>();
-        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-            TodoTask todoTask = postSnapshot.getValue(TodoTask.class);
-            todoTasks.add(todoTask);
+        for (DataSnapshot taskSnapshot : dataSnapshot.getChildren()) {
+            TodoTask todoTask = fromSnapshot(taskSnapshot);
+            if (todoTask != null) {
+                todoTasks.add(todoTask);
+            }
         }
-        taskDao.insert(todoTasks)
+        taskDao.insertOrUpdate(todoTasks)
                 .subscribeOn(ioScheduler).observeOn(uiScheduler).subscribe();
+    }
+
+    private TodoTask fromSnapshot(DataSnapshot taskSnapshot) {
+        TodoTask todoTask = taskSnapshot.getValue(TodoTask.class);
+        if (todoTask != null) {
+            todoTask.setServerId(taskSnapshot.getKey());
+        }
+        return todoTask;
     }
 }

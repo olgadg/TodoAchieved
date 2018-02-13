@@ -66,7 +66,7 @@ public class TaskListActivityTest {
     private List<TodoTask> addTasks(int taskCount) {
         List<TodoTask> sampleTasks = new ArrayList<>();
         for (int i = 0; i < taskCount; i++) {
-            todoTaskDao.insert(new TodoTask((long) i, TASK_PREFIX + i, new Date().getTime(), new Date().getTime()));
+            todoTaskDao.insertOrReplace(new TodoTask((long) i, TASK_PREFIX + i, new Date().getTime(), new Date().getTime()));
         }
         return sampleTasks;
     }

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f2055972066307a04110096412926f9d",
+    "identityHash": "cd6e91bdfd46a2364fb2e6faff7bb55c",
     "entities": [
       {
         "tableName": "TodoTask",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `text` TEXT NOT NULL, `createdDate` INTEGER, `date` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `text` TEXT NOT NULL, `createdDate` INTEGER, `date` INTEGER, `serverId` TEXT, `serverCreatedTimestamp` INTEGER, `serverUpdatedTimestamp` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -31,6 +31,24 @@
             "columnName": "date",
             "affinity": "INTEGER",
             "notNull": false
+          },
+          {
+            "fieldPath": "serverId",
+            "columnName": "serverId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "serverCreatedTimestamp",
+            "columnName": "serverCreatedTimestamp",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "serverUpdatedTimestamp",
+            "columnName": "serverUpdatedTimestamp",
+            "affinity": "INTEGER",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -45,7 +63,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"f2055972066307a04110096412926f9d\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"cd6e91bdfd46a2364fb2e6faff7bb55c\")"
     ]
   }
 }

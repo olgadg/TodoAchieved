@@ -6,6 +6,7 @@ import com.cottondroid.todoachieved.task.model.TodoTaskDao;
 import com.cottondroid.todoachieved.task.network.TaskUpdateListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ServerValue;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -43,7 +44,6 @@ public class TaskRepository {
     public void registerToTaskUpdates(TaskUpdateListener taskListener) {
         if (authenticationRepository.isLoggedIn()) {
             DatabaseReference dbReference = dbRefeferenceProvider.get();
-            dbReference.addListenerForSingleValueEvent(taskListener);
             dbReference.addChildEventListener(taskListener);
         }
     }
@@ -53,7 +53,7 @@ public class TaskRepository {
     }
 
     public Single<TodoTask> saveTask(final TodoTask todoTask) {
-        return taskDao.insert(todoTask)
+        return taskDao.insertOrReplace(todoTask)
                 .flatMap(new Function<Long, SingleSource<? extends TodoTask>>() {
                     @Override
                     public SingleSource<? extends TodoTask> apply(Long id) throws Exception {
@@ -64,10 +64,15 @@ public class TaskRepository {
                     @Override
                     public TodoTask apply(TodoTask todoTask) throws Exception {
                         if (authenticationRepository.isLoggedIn()) {
-                            dbRefeferenceProvider
-                                    .get()
-                                    .child(String.valueOf(todoTask.getId()))
-                                    .setValue(todoTask);
+                            String serverId = todoTask.getServerId();
+                            if (todoTask.getServerId() == null) {
+                                serverId = dbRefeferenceProvider.get().push().getKey();
+                                todoTask.setServerId(serverId);
+                                taskDao.updateSync(todoTask);
+                                todoTask.setServerCreatedTimestamp(ServerValue.TIMESTAMP);
+                            }
+                            todoTask.setServerUpdatedTimestamp(ServerValue.TIMESTAMP);
+                            dbRefeferenceProvider.get().child(serverId).setValue(todoTask);
                         }
                         return todoTask;
                     }
