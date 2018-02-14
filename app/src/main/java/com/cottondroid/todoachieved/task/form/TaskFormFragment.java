@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -74,6 +75,21 @@ public class TaskFormFragment extends Fragment {
 
             }
         });
+        long taskId = ((Activity) context).getIntent().getLongExtra(TaskFormActivity.INTENT_TASK_ID, -1);
+        if (taskId != -1) {
+            loadDisposable = presenter.loadTodoTask(taskId)
+                    .subscribeWith(new DisposableSingleObserver<TodoTask>() {
+                        @Override
+                        public void onSuccess(TodoTask task) {
+                            onTaskLoaded(task);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            onErrorLoadingTask(e);
+                        }
+                    });
+        }
     }
 
     @Override
@@ -85,11 +101,12 @@ public class TaskFormFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.task_form_fragment_main, container, false);
         rootView.setTag(TAG);
 
         taskNameEditText = rootView.findViewById(R.id.task_edittext);
+        taskNameEditText.requestFocus();
         taskDateTextView = rootView.findViewById(R.id.date_textview);
         taskDateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,23 +125,6 @@ public class TaskFormFragment extends Fragment {
 
         taskDateTextView.showDefaultText();
         taskTimeTextView.showDefaultText();
-        if (savedInstanceState == null) {
-            long taskId = getActivity().getIntent().getLongExtra(TaskFormActivity.INTENT_TASK_ID, -1);
-            if (taskId != -1) {
-                loadDisposable = presenter.loadTodoTask(taskId)
-                        .subscribeWith(new DisposableSingleObserver<TodoTask>() {
-                            @Override
-                            public void onSuccess(TodoTask task) {
-                                onTaskLoaded(task);
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                onErrorLoadingTask(e);
-                            }
-                        });
-            }
-        }
         return rootView;
     }
 
@@ -141,7 +141,9 @@ public class TaskFormFragment extends Fragment {
                 onSaveButtonClick();
                 return true;
             case android.R.id.home:
-                getActivity().finish();
+                if (getActivity() != null) {
+                    getActivity().finish();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -168,8 +170,9 @@ public class TaskFormFragment extends Fragment {
     }
 
     private void onItemAdded() {
-        getActivity().setResult(Activity.RESULT_OK);
-        getActivity().finish();
+        if (getActivity() != null) {
+            getActivity().finish();
+        }
     }
 
     private void onDateTimeChanged(Calendar taskDate) {

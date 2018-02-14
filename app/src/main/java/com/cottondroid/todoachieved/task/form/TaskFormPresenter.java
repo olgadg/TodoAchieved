@@ -4,34 +4,23 @@ import com.cottondroid.todoachieved.task.TaskRepository;
 import com.cottondroid.todoachieved.task.model.TodoTask;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.Calendar;
 
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.functions.Function;
 import io.reactivex.subjects.PublishSubject;
 
-import static com.cottondroid.todoachieved.di.ApplicationModule.IO_SCHEDULER;
-import static com.cottondroid.todoachieved.di.ApplicationModule.UI_SCHEDULER;
-
 public class TaskFormPresenter {
 
     private final TaskRepository taskRepository;
-    private final Scheduler uiScheduler;
-    private final Scheduler ioScheduler;
     private final PublishSubject<Calendar> datePublisher = PublishSubject.create();
 
     private TodoTask todoTask;
     private Calendar taskDate;
 
     @Inject
-    public TaskFormPresenter(TaskRepository taskRepository,
-                             @Named(UI_SCHEDULER) Scheduler uiScheduler,
-                             @Named(IO_SCHEDULER) Scheduler ioScheduler) {
+    public TaskFormPresenter(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
-        this.uiScheduler = uiScheduler;
-        this.ioScheduler = ioScheduler;
     }
 
     public Single<TodoTask> saveTodoTask(String taskName) {
@@ -47,9 +36,7 @@ public class TaskFormPresenter {
     }
 
     private Single<TodoTask> saveTodoTask(final TodoTask todoTask) {
-        return taskRepository.saveTask(todoTask)
-                .subscribeOn(ioScheduler)
-                .observeOn(uiScheduler);
+        return taskRepository.saveTask(todoTask);
     }
 
     public Single<TodoTask> loadTodoTask(final long taskId) {
@@ -60,9 +47,7 @@ public class TaskFormPresenter {
                         setTodoTask(task);
                         return task;
                     }
-                })
-                .subscribeOn(ioScheduler)
-                .observeOn(uiScheduler);
+                });
     }
 
     private void setTodoTask(TodoTask loadedTodoTask) {

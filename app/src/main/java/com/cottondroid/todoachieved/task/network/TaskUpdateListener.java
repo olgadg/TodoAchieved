@@ -7,19 +7,16 @@ import com.cottondroid.todoachieved.task.model.TodoTaskDao;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.List;
 
 import io.reactivex.Scheduler;
 
 import static com.cottondroid.todoachieved.di.ApplicationModule.IO_SCHEDULER;
 import static com.cottondroid.todoachieved.di.ApplicationModule.UI_SCHEDULER;
 
-public class TaskUpdateListener implements ChildEventListener, ValueEventListener {
+public class TaskUpdateListener implements ChildEventListener {
 
     private static final String TAG = TaskUpdateListener.class.getSimpleName();
     private final TodoTaskDao taskDao;
@@ -68,19 +65,6 @@ public class TaskUpdateListener implements ChildEventListener, ValueEventListene
     @Override
     public void onCancelled(DatabaseError databaseError) {
         Log.w(TAG, "Cancelled", databaseError.toException());
-    }
-
-    @Override
-    public void onDataChange(DataSnapshot dataSnapshot) {
-        List<TodoTask> todoTasks = new ArrayList<>();
-        for (DataSnapshot taskSnapshot : dataSnapshot.getChildren()) {
-            TodoTask todoTask = fromSnapshot(taskSnapshot);
-            if (todoTask != null) {
-                todoTasks.add(todoTask);
-            }
-        }
-        taskDao.insertOrUpdate(todoTasks)
-                .subscribeOn(ioScheduler).observeOn(uiScheduler).subscribe();
     }
 
     private TodoTask fromSnapshot(DataSnapshot taskSnapshot) {

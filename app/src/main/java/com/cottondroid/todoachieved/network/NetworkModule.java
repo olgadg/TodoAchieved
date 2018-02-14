@@ -17,7 +17,9 @@ public class NetworkModule {
     @Provides
     @Singleton
     public DatabaseReference getDatabaseReference() {
-        return FirebaseDatabase.getInstance().getReference();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseDatabase.setPersistenceEnabled(true);
+        return firebaseDatabase.getReference();
     }
 
     @Provides

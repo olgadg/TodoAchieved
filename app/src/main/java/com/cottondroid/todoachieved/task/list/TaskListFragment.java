@@ -84,7 +84,18 @@ public class TaskListFragment extends Fragment {
         super.onDetach();
         listDisposable.dispose();
         clickDisposable.dispose();
-        presenter.onDetach();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        presenter.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        presenter.onPause();
     }
 
     @Override

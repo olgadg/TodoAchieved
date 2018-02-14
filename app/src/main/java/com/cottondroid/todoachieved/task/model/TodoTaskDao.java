@@ -5,15 +5,13 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Transaction;
 import android.arch.persistence.room.Update;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 
 @Dao
@@ -37,46 +35,8 @@ public abstract class TodoTaskDao {
         });
     }
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract Long[] insertSync(List<TodoTask> tasks);
-
-    public Single<Long[]> insertOrUpdate(final List<TodoTask> tasks) {
-        return Single.fromCallable(new Callable<Long[]>() {
-            @Override
-            @Transaction
-            public Long[] call() throws Exception {
-                return insertOrUpdateSync(tasks);
-            }
-        });
-    }
-
-    @Transaction
-    protected Long[] insertOrUpdateSync(final List<TodoTask> tasks) {
-        List<TodoTask> toInsert = new ArrayList<>();
-        List<TodoTask> toUpdate = new ArrayList<>();
-        List<Long> ids = new ArrayList<>();
-        for (TodoTask task : tasks) {
-            if (task.getId() == null) {
-                Long id = getIdByServerId(task.getServerId());
-                task.setId(id);
-            }
-            if (task.getId() == null) {
-                toInsert.add(task);
-            } else {
-                ids.add(task.getId());
-                toUpdate.add(task);
-            }
-        }
-        Collections.addAll(ids, insertSync(toInsert));
-        updateSync(toUpdate);
-        return ids.toArray(new Long[]{});
-    }
-
     @Update
     public abstract int updateSync(TodoTask task);
-
-    @Update
-    public abstract void updateSync(List<TodoTask> task);
 
     public Single<Integer> update(final TodoTask todoTask) {
         return Single.fromCallable(new Callable<Integer>() {
@@ -112,4 +72,8 @@ public abstract class TodoTaskDao {
 
     @Query("SELECT * FROM todotask WHERE id = :taskId")
     public abstract Single<TodoTask> load(long taskId);
+
+    @Query("SELECT serverId FROM todotask ORDER BY serverCreatedTimestamp desc LIMIT 1")
+    public abstract Maybe<String> getLastServerId();
+
 }

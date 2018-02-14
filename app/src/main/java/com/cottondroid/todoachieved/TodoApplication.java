@@ -32,7 +32,7 @@ public class TodoApplication extends Application implements HasActivityInjector,
     }
 
     @Override
-    public DispatchingAndroidInjector<Activity> activityInjector() {
+    public AndroidInjector<Activity> activityInjector() {
         return activityDispatchingAndroidInjector;
     }
 

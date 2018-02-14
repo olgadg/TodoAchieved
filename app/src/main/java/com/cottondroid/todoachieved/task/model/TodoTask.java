@@ -21,6 +21,7 @@ public class TodoTask {
     private String text;
     private Long createdDate;
     private Long date;
+    @Exclude
     private String serverId;
     @TypeConverters(ServerCreatedTimestampConverter.class)
     private Map<String, String> serverCreatedTimestamp;
@@ -44,6 +45,7 @@ public class TodoTask {
         return id;
     }
 
+    @Exclude
     public void setId(Long id) {
         this.id = id;
     }
@@ -78,6 +80,7 @@ public class TodoTask {
         return serverId;
     }
 
+    @Exclude
     public void setServerId(String serverId) {
         this.serverId = serverId;
     }
