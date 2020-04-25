@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import java.text.DateFormat;
 import java.util.Calendar;
 
-public abstract class DateTimeTextView extends android.support.v7.widget.AppCompatTextView {
+public abstract class DateTimeTextView extends androidx.appcompat.widget.AppCompatTextView {
 
     public DateTimeTextView(Context context) {
         super(context);

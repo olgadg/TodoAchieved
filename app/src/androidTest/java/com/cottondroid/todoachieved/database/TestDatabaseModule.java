@@ -1,6 +1,6 @@
 package com.cottondroid.todoachieved.database;
 
-import android.arch.persistence.room.Room;
+import androidx.room.Room;
 
 import com.cottondroid.todoachieved.TodoApplication;
 import com.cottondroid.todoachieved.task.model.TodoTaskDao;

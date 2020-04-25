@@ -6,9 +6,10 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 
-import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -43,12 +44,14 @@ public class AuthenticationLauncher {
                     return;
                 }
 
-                if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
+                if (response.getError() != null
+                        && response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
                     // on no network
                     return;
                 }
 
-                if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
+                if (response.getError() != null
+                        && response.getError().getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
                     // on unknown error
                     return;
                 }

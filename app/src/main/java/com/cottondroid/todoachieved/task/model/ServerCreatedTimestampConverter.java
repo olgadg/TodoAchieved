@@ -1,6 +1,6 @@
 package com.cottondroid.todoachieved.task.model;
 
-import android.arch.persistence.room.TypeConverter;
+import androidx.room.TypeConverter;
 
 import java.util.HashMap;
 import java.util.Map;

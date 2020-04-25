@@ -5,9 +5,6 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,15 +16,20 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.cottondroid.todoachieved.R;
 import com.cottondroid.todoachieved.task.form.time.DateTextView;
 import com.cottondroid.todoachieved.task.form.time.TaskDatePickerDialog;
 import com.cottondroid.todoachieved.task.form.time.TaskTimePickerDialog;
 import com.cottondroid.todoachieved.task.form.time.TimeTextView;
 import com.cottondroid.todoachieved.task.model.TodoTask;
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.Calendar;
 
 import javax.inject.Inject;
-import java.util.Calendar;
 
 import dagger.android.support.AndroidSupportInjection;
 import io.reactivex.disposables.Disposable;

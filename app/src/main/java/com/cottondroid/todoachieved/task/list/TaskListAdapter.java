@@ -1,10 +1,11 @@
 package com.cottondroid.todoachieved.task.list;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.cottondroid.todoachieved.R;
 import com.cottondroid.todoachieved.task.model.TodoTask;
