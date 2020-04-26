@@ -6,22 +6,24 @@
     android:orientation="horizontal">
 
     <com.cottondroid.todoachieved.task.form.time.DateTextView
-        android:id="@+id/date_textview"
+        android:id="@+id/dateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/margin_horizontal"
+        android:layout_marginEnd="@dimen/margin_horizontal"
         android:gravity="center_horizontal"
         android:layout_weight="1"
         android:clickable="true"
-        tools:text="12/05/2016 16:30" />
+        tools:text="12/05/2016 16:30"
+        android:focusable="true" />
 
     <com.cottondroid.todoachieved.task.form.time.TimeTextView
-        android:id="@+id/time_textview"
+        android:id="@+id/timeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/margin_horizontal"
+        android:layout_marginEnd="@dimen/margin_horizontal"
         android:gravity="center_horizontal"
         android:layout_weight="1"
         android:clickable="true"
-        tools:text="16:30" />
+        tools:text="16:30"
+        android:focusable="true" />
 </LinearLayout>
