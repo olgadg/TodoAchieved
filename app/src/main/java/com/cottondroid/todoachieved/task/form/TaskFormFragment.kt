@@ -19,10 +19,7 @@ import com.cottondroid.todoachieved.task.form.time.TaskTimePickerDialog
 import com.cottondroid.todoachieved.task.model.TodoTask
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.AndroidSupportInjection
-import io.reactivex.disposables.Disposable
-import io.reactivex.internal.disposables.EmptyDisposable
-import io.reactivex.observers.DisposableObserver
-import io.reactivex.observers.DisposableSingleObserver
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.pick_date_layout.*
 import kotlinx.android.synthetic.main.task_form_fragment_main.*
 import java.util.Calendar
@@ -31,9 +28,7 @@ import javax.inject.Inject
 class TaskFormFragment : Fragment() {
     @Inject
     lateinit var presenter: TaskFormPresenter
-    private var loadDisposable: Disposable = EmptyDisposable.INSTANCE
-    private var dateDisposable: Disposable = EmptyDisposable.INSTANCE
-    private var saveDisposable: Disposable = EmptyDisposable.INSTANCE
+    private val disposables = CompositeDisposable()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -42,34 +37,28 @@ class TaskFormFragment : Fragment() {
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
-        dateDisposable = presenter.datePublisher.subscribeWith(object : DisposableObserver<Calendar?>() {
-            override fun onNext(taskDate: Calendar) {
-                onDateTimeChanged(taskDate)
-            }
-
-            override fun onError(e: Throwable) {}
-            override fun onComplete() {}
-        })
+        disposables.add(
+                presenter.datePublisher.subscribe
+                { taskDate ->
+                    onDateTimeChanged(taskDate)
+                }
+        )
         val taskId = (context as Activity).intent.getLongExtra(TaskFormActivity.INTENT_TASK_ID, -1)
         if (taskId != -1L) {
-            loadDisposable = presenter.loadTodoTask(taskId)
-                    .subscribeWith(object : DisposableSingleObserver<TodoTask?>() {
-                        override fun onSuccess(task: TodoTask) {
-                            onTaskLoaded(task)
-                        }
-
-                        override fun onError(e: Throwable) {
-                            onErrorLoadingTask(e)
-                        }
-                    })
+            disposables.add(presenter.loadTodoTask(taskId).subscribe(
+                    { task ->
+                        onTaskLoaded(task)
+                    },
+                    { e ->
+                        onErrorLoadingTask(e)
+                    }
+            ))
         }
     }
 
     override fun onDetach() {
         super.onDetach()
-        loadDisposable.dispose()
-        dateDisposable.dispose()
-        saveDisposable.dispose()
+        disposables.clear()
     }
 
     override fun onCreateView(
@@ -117,7 +106,7 @@ class TaskFormFragment : Fragment() {
 
     private fun onSaveButtonClick() {
         taskEditText.text.let {
-            saveDisposable = presenter
+            disposables.add(presenter
                     .saveTodoTask(it.toString())
                     .subscribe(
                             {
@@ -127,6 +116,7 @@ class TaskFormFragment : Fragment() {
                                 onErrorSavingTask(e)
                             }
                     )
+            )
         }
     }
 

@@ -13,12 +13,12 @@ import javax.inject.Singleton
 @Singleton
 class TodoTaskService @Inject constructor(
         @param:Named(NetworkModule.TASKS_DB)
-        private val dbRefeferenceProvider: Provider<DatabaseReference>,
+        private val dbReferenceProvider: Provider<DatabaseReference>,
         private val authenticationRepository: AuthenticationRepository
 ) {
     fun registerToTaskUpdates(taskListener: TaskUpdateListener, lastServerId: String) {
         if (authenticationRepository.isLoggedIn) {
-            val dbReference = dbRefeferenceProvider.get()
+            val dbReference = dbReferenceProvider.get()
             val query = if (lastServerId.isEmpty()) {
                 dbReference.orderByKey().startAt(lastServerId)
             } else {
@@ -30,13 +30,13 @@ class TodoTaskService @Inject constructor(
 
     fun unregisterFromTaskUpdates(taskListener: TaskUpdateListener) {
         if (authenticationRepository.isLoggedIn) {
-            dbRefeferenceProvider.get().removeEventListener(taskListener)
+            dbReferenceProvider.get().removeEventListener(taskListener)
         }
     }
 
     fun saveTask(todoTask: TodoTask) {
         if (authenticationRepository.isLoggedIn) {
-            dbRefeferenceProvider.get().child(todoTask.serverId!!).setValue(todoTask)
+            dbReferenceProvider.get().child(todoTask.serverId!!).setValue(todoTask)
         }
     }
 
@@ -44,7 +44,7 @@ class TodoTaskService @Inject constructor(
         if (authenticationRepository.isLoggedIn) {
             if (todoTask.serverId == null) {
                 todoTask.copy(
-                        serverId = dbRefeferenceProvider.get().push().key,
+                        serverId = dbReferenceProvider.get().push().key,
                         serverCreatedTimestamp = createdTimestamp()
                 )
             }

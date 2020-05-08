@@ -8,7 +8,7 @@ import java.util.Calendar
 import javax.inject.Inject
 
 class TaskFormPresenter @Inject constructor(private val taskRepository: TaskRepository) {
-    val datePublisher = PublishSubject.create<Calendar?>()
+    val datePublisher = PublishSubject.create<Calendar>()
     private var todoTask: TodoTask = TodoTask()
     internal var taskDate: Calendar = Calendar.getInstance()
         private set
@@ -56,5 +56,4 @@ class TaskFormPresenter @Inject constructor(private val taskRepository: TaskRepo
         taskDate[Calendar.SECOND] = 0
         datePublisher.onNext(taskDate)
     }
-
 }

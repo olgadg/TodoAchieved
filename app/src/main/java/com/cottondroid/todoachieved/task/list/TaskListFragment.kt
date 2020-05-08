@@ -19,7 +19,6 @@ import com.cottondroid.todoachieved.task.form.TaskFormActivity
 import com.cottondroid.todoachieved.task.model.TodoTask
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subscribers.ResourceSubscriber
 import kotlinx.android.synthetic.main.task_list_fragment_main.*
 import javax.inject.Inject
 
@@ -44,16 +43,14 @@ class TaskListFragment : Fragment() {
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
-        val resourceSubscriber: ResourceSubscriber<List<TodoTask>> = presenter.items.subscribeWith(object : ResourceSubscriber<List<TodoTask>>() {
-            override fun onNext(todoTasks: List<TodoTask>) {
-                adapter.addItems(todoTasks)
-                adapter.notifyDataSetChanged()
-            }
 
-            override fun onError(e: Throwable) {}
-            override fun onComplete() {}
-        })
-        disposables.add(resourceSubscriber)
+        disposables.add(presenter.items
+                .subscribe
+                { todoTasks ->
+                    adapter.addItems(todoTasks)
+                    adapter.notifyDataSetChanged()
+                }
+        )
     }
 
     override fun onDetach() {
@@ -82,7 +79,10 @@ class TaskListFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.login -> {
-                startActivityForResult(authenticationLauncher.startLoginActivityIntent(), AuthenticationLauncher.RC_SIGN_IN)
+                startActivityForResult(
+                        authenticationLauncher.startLoginActivityIntent(),
+                        AuthenticationLauncher.RC_SIGN_IN
+                )
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -91,15 +91,17 @@ class TaskListFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == AuthenticationLauncher.RC_SIGN_IN
-                && resultCode == Activity.RESULT_OK && activity != null
-        ) {
+        if (requestCode == AuthenticationLauncher.RC_SIGN_IN && resultCode == Activity.RESULT_OK) {
             requireActivity().invalidateOptionsMenu()
             presenter.onLogin()
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View? {
         val rootView = inflater.inflate(R.layout.task_list_fragment_main, container, false)
         rootView.tag = TAG
         return rootView

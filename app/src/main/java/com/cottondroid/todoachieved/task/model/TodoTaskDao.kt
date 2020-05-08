@@ -17,6 +17,7 @@ abstract class TodoTaskDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insertSync(task: TodoTask): Long
+
     fun insertOrReplace(todoTask: TodoTask): Single<Long> {
         return Single.fromCallable {
             if (todoTask.id == null && todoTask.serverId != null) {
@@ -29,6 +30,7 @@ abstract class TodoTaskDao {
 
     @Update
     abstract fun updateSync(task: TodoTask): Int
+
     fun update(todoTask: TodoTask): Single<Int> {
         return Single.fromCallable {
             if (todoTask.id == null) {
@@ -41,6 +43,7 @@ abstract class TodoTaskDao {
 
     @Delete
     abstract fun deleteSync(task: TodoTask): Int
+
     fun delete(todoTask: TodoTask): Single<Int> {
         return Single.fromCallable {
             if (todoTask.id == null) {
