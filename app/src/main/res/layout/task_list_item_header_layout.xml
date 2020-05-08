@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/taskText"
+    android:id="@+id/header"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:fontFamily="sans-serif-medium"
     android:paddingLeft="@dimen/margin_horizontal"
     android:paddingTop="@dimen/margin_vertical"
     android:paddingRight="@dimen/margin_horizontal"
     android:paddingBottom="@dimen/margin_vertical"
-    android:textSize="@dimen/font_size" />
+    android:textSize="@dimen/font_size_header" />
