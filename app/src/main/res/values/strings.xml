@@ -2,6 +2,7 @@
   <string name="app_name">TodoAchieved</string>
   <!--Form-->
   <string name="task_form_done">done</string>
+  <string name="task_form_delete">done</string>
   <string name="task_form_task_label">Task</string>
   <string name="task_form_choose_date_button_name">Choose Date</string>
   <string name="task_form_save_button_name">Save</string>
@@ -9,6 +10,7 @@
   <string name="task_form_choose_time">Choose time</string>
   <string name="task_form_saving_error">There was an error saving the task, please, close and open again.</string>
   <string name="task_form_loading_error">There was an error loading the task, please, go back and try again.</string>
+  <string name="task_form_deleting_error">There was an error deleting the task, please, close and open again.</string>
   <string name="task_form_no_time">No time</string>
   <!-- List -->
   <string name="task_list_login_menu_title">Log in</string>

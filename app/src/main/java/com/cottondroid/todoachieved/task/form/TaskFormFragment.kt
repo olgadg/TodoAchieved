@@ -96,6 +96,10 @@ class TaskFormFragment : Fragment() {
                 onSaveButtonClick()
                 true
             }
+            R.id.delete -> {
+                onDeleteButtonClick()
+                true
+            }
             android.R.id.home -> {
                 activity?.finish()
                 true
@@ -110,7 +114,7 @@ class TaskFormFragment : Fragment() {
                     .saveTodoTask(it.toString())
                     .subscribe(
                             {
-                                onItemAdded()
+                                finish()
                             },
                             { e ->
                                 onErrorSavingTask(e)
@@ -120,7 +124,22 @@ class TaskFormFragment : Fragment() {
         }
     }
 
-    private fun onItemAdded() {
+
+    private fun onDeleteButtonClick() {
+            disposables.add(presenter
+                    .deleteTodoTask()
+                    .subscribe(
+                            {
+                                finish()
+                            },
+                            { e ->
+                                onErrorDeletingTask(e)
+                            }
+                    )
+            )
+    }
+
+    private fun finish() {
         activity?.finish()
     }
 
@@ -145,6 +164,11 @@ class TaskFormFragment : Fragment() {
     private fun onErrorSavingTask(e: Throwable) {
         Log.e(TAG, getString(R.string.task_form_saving_error), e)
         showError(R.string.task_form_saving_error)
+    }
+
+    private fun onErrorDeletingTask(e: Throwable) {
+        Log.e(TAG, getString(R.string.task_form_deleting_error), e)
+        showError(R.string.task_form_deleting_error)
     }
 
     private fun onErrorLoadingTask(e: Throwable) {

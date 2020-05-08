@@ -20,11 +20,14 @@ abstract class TodoTaskDao {
 
     fun insertOrReplace(todoTask: TodoTask): Single<Long> {
         return Single.fromCallable {
-            if (todoTask.id == null && todoTask.serverId != null) {
-                val id = getIdByServerId(todoTask.serverId)
-                todoTask.copy(id = id)
-            }
-            insertSync(todoTask)
+            insertSync(
+                    if (todoTask.id == null && todoTask.serverId != null) {
+                        val id = getIdByServerId(todoTask.serverId)
+                        todoTask.copy(id = id)
+                    } else {
+                        todoTask
+                    }
+            )
         }
     }
 
@@ -33,11 +36,14 @@ abstract class TodoTaskDao {
 
     fun update(todoTask: TodoTask): Single<Int> {
         return Single.fromCallable {
-            if (todoTask.id == null) {
-                val id = getIdByServerId(todoTask.serverId!!)
-                todoTask.copy(id = id)
-            }
-            updateSync(todoTask)
+            updateSync(
+                    if (todoTask.id == null) {
+                        val id = getIdByServerId(todoTask.serverId!!)
+                        todoTask.copy(id = id)
+                    } else {
+                        todoTask
+                    }
+            )
         }
     }
 
@@ -46,16 +52,12 @@ abstract class TodoTaskDao {
 
     fun delete(todoTask: TodoTask): Single<Int> {
         return Single.fromCallable {
-            if (todoTask.id == null) {
-                val id = getIdByServerId(todoTask.serverId!!)
-                todoTask.copy(id = id)
-            }
             deleteSync(todoTask)
         }
     }
 
     @Query("SELECT id FROM todotask WHERE serverId = :serverId")
-    abstract fun getIdByServerId(serverId: String): Long
+    abstract fun getIdByServerId(serverId: String): Long?
 
     @Query("SELECT * FROM todotask WHERE id = :taskId")
     abstract fun load(taskId: Long): Single<TodoTask>

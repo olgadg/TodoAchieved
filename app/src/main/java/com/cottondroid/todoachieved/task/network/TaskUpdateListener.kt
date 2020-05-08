@@ -47,8 +47,7 @@ class TaskUpdateListener @Inject constructor(private val taskDao: TodoTaskDao) :
 
     private fun fromSnapshot(taskSnapshot: DataSnapshot): TodoTask? {
         val todoTask = taskSnapshot.getValue(TodoTask::class.java)
-        todoTask?.copy(serverId = taskSnapshot.key)
-        return todoTask
+        return todoTask?.copy(serverId = taskSnapshot.key)
     }
 
     companion object {

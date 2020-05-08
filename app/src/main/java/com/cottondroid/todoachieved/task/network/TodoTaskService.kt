@@ -40,18 +40,27 @@ class TodoTaskService @Inject constructor(
         }
     }
 
-    fun populateServerValues(todoTask: TodoTask) {
+    fun deleteTask(todoTask: TodoTask) {
         if (authenticationRepository.isLoggedIn) {
-            if (todoTask.serverId == null) {
+            dbReferenceProvider.get().child(todoTask.serverId!!).removeValue()
+        }
+    }
+
+    fun populateServerValues(todoTask: TodoTask): TodoTask {
+        if (authenticationRepository.isLoggedIn) {
+            return if (todoTask.serverId == null) {
                 todoTask.copy(
                         serverId = dbReferenceProvider.get().push().key,
-                        serverCreatedTimestamp = createdTimestamp()
+                        serverCreatedTimestamp = createdTimestamp(),
+                        serverUpdatedTimestamp = updatedTimestamp()
+                )
+            } else {
+                todoTask.copy(
+                        serverUpdatedTimestamp = updatedTimestamp()
                 )
             }
-            todoTask.copy(
-                    serverUpdatedTimestamp = updatedTimestamp()
-            )
         }
+        return todoTask
     }
 
     companion object {

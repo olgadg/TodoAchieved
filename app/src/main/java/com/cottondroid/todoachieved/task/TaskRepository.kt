@@ -46,9 +46,9 @@ class TaskRepository @Inject constructor(
                     taskDao.load(taskId)
                 }
                 .doOnSuccess { task ->
-                    todoTaskService.populateServerValues(task)
-                    taskDao.updateSync(task)
-                    todoTaskService.saveTask(task)
+                    val updatedTask = todoTaskService.populateServerValues(task)
+                    taskDao.updateSync(updatedTask)
+                    todoTaskService.saveTask(updatedTask)
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -56,6 +56,15 @@ class TaskRepository @Inject constructor(
 
     fun loadTask(taskId: Long): Single<TodoTask> {
         return taskDao.load(taskId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun deleteTask(task: TodoTask): Single<Int> {
+        return taskDao.delete(task)
+                .doOnSuccess {
+                    todoTaskService.deleteTask(task)
+                }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }

@@ -14,14 +14,24 @@ class TaskFormPresenter @Inject constructor(private val taskRepository: TaskRepo
         private set
 
     fun saveTodoTask(taskName: String?): Single<TodoTask> {
-        return saveTodoTask(todoTask.copy(
-                text = taskName,
-                date = taskDate.timeInMillis
-        ))
+        return saveTodoTask(
+                todoTask.copy(
+                        text = taskName,
+                        date = taskDate.timeInMillis
+                )
+        )
     }
 
     private fun saveTodoTask(todoTask: TodoTask): Single<TodoTask> {
         return taskRepository.saveTask(todoTask)
+    }
+
+    fun deleteTodoTask(): Single<Int> {
+        return return if(todoTask.id == null) {
+            Single.just(0)
+        } else {
+            taskRepository.deleteTask(todoTask)
+        }
     }
 
     fun loadTodoTask(taskId: Long): Single<TodoTask> {
